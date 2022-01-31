@@ -26,7 +26,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Print(encodedFile)
+		fmt.Println(encodedFile)
 	default:
 		log.Fatalf("error while parsing filepath %s with file utils plugin", filePath)
 	}
