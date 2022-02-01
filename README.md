@@ -2,7 +2,7 @@
 
 A Helm downloader plugin that supports different file manipulations, conversions, encoders and decoders.
 
-![Plugin Tests](https://github.com/true-north-engineering/helm-file-utils/actions/file-utils-release.yml/badge.svg)
+![Plugin Tests](https://github.com/true-north-engineering/helm-file-utils/actions/workflows/file-utils-release.yml/badge.svg)
 
 ## Installation
 
