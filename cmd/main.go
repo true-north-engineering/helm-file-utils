@@ -1,24 +1,32 @@
 package main
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/true-north-engineering/helm-file-utils/cmd/base64enc"
-	"log"
+	"fmt"
+	"github.com/true-north-engineering/helm-file-utils/cmd/base64"
+	"os"
+	"strings"
 )
 
 var version = "Version is not provided"
 
-var cmd = &cobra.Command{
-	Use:   "",
-	Short: "Helm file utils plugin",
-	RunE: func(cmd *cobra.Command, aargs []string) error {
-		return cmd.Help()
-	},
-}
+const (
+	base64enc = "base64enc://"
+)
 
 func main() {
-	cmd.AddCommand(base64enc.Command())
-	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+	if len(os.Args) < 5 {
+		fmt.Println("error while running file utils plugin, filepath argument is not correctly specified.")
+		os.Exit(1)
+	}
+	filePath := os.Args[4]
+	switch {
+	case strings.HasPrefix(filePath, base64enc):
+		encodedFile, err := base64.EncodeFile(strings.TrimPrefix(filePath, base64enc))
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(encodedFile)
+	default:
+		fmt.Printf("error while parsing filepath %s with file utils plugin", filePath)
 	}
 }
