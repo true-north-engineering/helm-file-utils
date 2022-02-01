@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/true-north-engineering/helm-file-utils/cmd/base64"
+	"github.com/true-north-engineering/helm-file-utils/cmd/futl"
+	"log"
 	"os"
 	"strings"
 )
@@ -10,7 +12,8 @@ import (
 var version = "Version is not provided"
 
 const (
-	base64enc = "base64enc://"
+	base64encPrefix = "base64enc://"
+	futlPrefix = "futl://"
 )
 
 func main() {
@@ -20,8 +23,14 @@ func main() {
 	}
 	filePath := os.Args[4]
 	switch {
-	case strings.HasPrefix(filePath, base64enc):
-		encodedFile, err := base64.EncodeFile(strings.TrimPrefix(filePath, base64enc))
+	case strings.HasPrefix(filePath, base64encPrefix):
+		encodedFile, err := base64.EncodeFile(strings.TrimPrefix(filePath, base64encPrefix))
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(encodedFile)
+	case strings.HasPrefix(filePath, futlPrefix):
+		encodedFile, err := futl.ParseFile(strings.TrimPrefix(filePath, futlPrefix))
 		if err != nil {
 			fmt.Println(err)
 		}

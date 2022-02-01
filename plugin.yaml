@@ -10,3 +10,4 @@ downloaders:
   - command: "bin/file-utils"
     protocols:
       - "base64enc"
+      - "futl"
