@@ -4,15 +4,21 @@ import (
 	"encoding/base64"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/pkg/errors"
 )
 
-// EncodeFile encode a byte array to base64 string
+const (
+	ENCPrefix = "base64enc://"
+)
+
+// ParseFile encode a byte array to base64 string
 // receives:
 // - filePath: path to file that will be encoded
 // returns string base64 encoded and error.
-func EncodeFile(filePath string) (string, error) {
+func ParseFile(filePath string) (string, error) {
+	filePath = strings.TrimPrefix(filePath, ENCPrefix)
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return "", errors.Errorf("file %s does not exist", filePath)
 	}
