@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"os"
