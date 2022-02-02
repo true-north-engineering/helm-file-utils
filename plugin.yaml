@@ -11,3 +11,4 @@ downloaders:
     protocols:
       - "base64enc"
       - "futl"
+      - "file"

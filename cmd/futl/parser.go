@@ -2,10 +2,12 @@ package futl
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/true-north-engineering/helm-file-utils/cmd/base64"
 	"gopkg.in/yaml.v3"
 )
 
@@ -38,9 +40,23 @@ func expandFile(i interface{}) interface{} {
 			x[i] = expandFile(v)
 		}
 	case string:
-		if strings.HasPrefix(x, "futl+base64enc://") {
-			return "AAA"
+		var value string
+		var err error
+		switch {
+		case strings.HasPrefix(x, "base64enc://"):
+			value, err = base64.EncodeFile(strings.TrimPrefix(x, "base64enc://"))
+
+		case strings.HasPrefix(x, "file://"):
+			var file []byte
+			file, err = ioutil.ReadFile(strings.TrimPrefix(x, "file://"))
+			value = string(file)
+		default:
+			value = x
 		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		return value
 	}
 	return i
 }
