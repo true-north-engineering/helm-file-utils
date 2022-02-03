@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/true-north-engineering/helm-file-utils/cmd/parser"
+	"log"
 	"os"
+
+	"github.com/true-north-engineering/helm-file-utils/cmd/parser"
 )
 
 //var version = "Version is not provided"
@@ -24,5 +26,11 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Println(parsedValue)
+	switch parsedValue.(type) {
+	case []byte:
+		fmt.Println(string(parsedValue.([]byte)))
+	default:
+		log.Fatal("Resulting value is not a single file")
+		os.Exit(1)
+	}
 }

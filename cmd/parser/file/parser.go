@@ -9,8 +9,8 @@ const (
 	Prefix = "file://"
 )
 
-func ParseFile(filePath string) (string, error) {
+func ParseFile(filePath string) (interface{}, error) {
 	filePath = strings.TrimPrefix(filePath, Prefix)
-	file, err := ioutil.ReadFile(strings.TrimPrefix(filePath, Prefix))
-	return string(file), err
+	file, err := ioutil.ReadFile(filePath)
+	return file, err
 }

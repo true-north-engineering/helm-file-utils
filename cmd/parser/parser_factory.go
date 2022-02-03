@@ -5,10 +5,11 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/true-north-engineering/helm-file-utils/cmd/parser/base64"
+	"github.com/true-north-engineering/helm-file-utils/cmd/parser/dir"
 	"github.com/true-north-engineering/helm-file-utils/cmd/parser/file"
 )
 
-type Factory func(filePath string) (string, error)
+type Factory func(filePath string) (interface{}, error)
 
 func DetermineParser(filePath string) (Factory, error) {
 	switch {
@@ -18,6 +19,8 @@ func DetermineParser(filePath string) (Factory, error) {
 		return ParseFile, nil
 	case strings.HasPrefix(filePath, file.Prefix):
 		return file.ParseFile, nil
+	case strings.HasPrefix(filePath, dir.Prefix):
+		return dir.ParseDir, nil
 	}
 	if !strings.Contains(filePath, "://") {
 		return file.ParseFile, nil

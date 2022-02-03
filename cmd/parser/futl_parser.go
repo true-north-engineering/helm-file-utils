@@ -14,7 +14,7 @@ const (
 	FUTLTag    = "!futl"
 )
 
-func ParseFile(filePath string) (string, error) {
+func ParseFile(filePath string) (interface{}, error) {
 	filePath = strings.TrimPrefix(filePath, FUTLPrefix)
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return "", errors.Errorf("file %s does not exist", filePath)
@@ -33,7 +33,7 @@ func ParseFile(filePath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(outputYaml), nil
+	return outputYaml, nil
 }
 
 type FutlTagProcessor struct {
@@ -59,7 +59,7 @@ func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
 		if err != nil {
 			return nil, err
 		}
-		node.Value = value
+		node.Value = string(value.([]byte))
 	}
 	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
 		var err error
