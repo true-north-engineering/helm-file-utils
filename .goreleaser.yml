@@ -13,8 +13,8 @@ builds:
     id: "helm-file-utils"
     dir: .
     main: ./cmd
-archive:
-  format: tar.gz
-  files:
-#    - LICENSE
-    - plugin.yaml
+archives:
+  - format: tar.gz
+    files:
+      - plugin.yaml
+      - README.md
