@@ -1,4 +1,4 @@
-package parser
+package transformer
 
 import (
 	"io/ioutil"
@@ -14,7 +14,7 @@ const (
 	FUTLTag    = "!futl"
 )
 
-func ParseFile(filePath string) (interface{}, error) {
+func FUTLTransorm(filePath string) (interface{}, error) {
 	filePath = strings.TrimPrefix(filePath, FUTLPrefix)
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return "", errors.Errorf("file %s does not exist", filePath)
@@ -51,7 +51,7 @@ func (i *FutlTagProcessor) UnmarshalYAML(node *yaml.Node) error {
 func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
 	if node.Tag == FUTLTag {
 		fileURL := node.Value
-		parserFunc, err := DetermineParser(fileURL)
+		parserFunc, err := DetermineTransformer(fileURL)
 		if err != nil {
 			return nil, err
 		}

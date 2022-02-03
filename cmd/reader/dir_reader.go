@@ -1,19 +1,18 @@
-package dir
+package reader
 
 import (
 	"os"
 	"strings"
 
 	"github.com/pkg/errors"
-	fileParser "github.com/true-north-engineering/helm-file-utils/cmd/parser/file"
 )
 
 const (
-	Prefix = "dir://"
+	DirPrefix = "dir://"
 )
 
-func ParseDir(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, Prefix)
+func ReadDir(filePath string) (interface{}, error) {
+	filePath = strings.TrimPrefix(filePath, DirPrefix)
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -33,7 +32,7 @@ func ParseDir(filePath string) (interface{}, error) {
 	}
 	result := make(map[string][]byte)
 	for _, fileInfo := range fileInfos {
-		parsedFile, err := fileParser.ParseFile(filePath + "/" + fileInfo.Name())
+		parsedFile, err := ReadFile(filePath + "/" + fileInfo.Name())
 		if err != nil {
 			return nil, err
 		}

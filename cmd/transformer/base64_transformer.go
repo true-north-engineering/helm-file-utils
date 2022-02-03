@@ -1,4 +1,4 @@
-package base64
+package transformer
 
 import (
 	"encoding/base64"
@@ -10,15 +10,11 @@ import (
 )
 
 const (
-	ENCPrefix = "base64enc://"
+	B64EncPrefix = "base64enc://"
 )
 
-// ParseFile encode a byte array to base64 string
-// receives:
-// - filePath: path to file that will be encoded
-// returns string base64 encoded and error.
-func ParseFile(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, ENCPrefix)
+func B64ENCTransform(filePath string) (interface{}, error) {
+	filePath = strings.TrimPrefix(filePath, B64EncPrefix)
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return "", errors.Errorf("file %s does not exist", filePath)
 	}

@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 
-	"github.com/true-north-engineering/helm-file-utils/cmd/parser"
+	"github.com/true-north-engineering/helm-file-utils/cmd/transformer"
 )
 
 //var version = "Version is not provided"
@@ -15,13 +16,18 @@ func main() {
 		fmt.Println("error while running file utils plugin, filepath argument is not correctly specified.")
 		os.Exit(1)
 	}
-	filePath := os.Args[4]
-	transformByProtocol, err := parser.DetermineParser(filePath)
+	filePath, err := url.Parse(os.Args[4])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	parsedValue, err := transformByProtocol(filePath)
+
+	transformByProtocol, err := transformer.DetermineTransformer(filePath.String())
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	parsedValue, err := transformByProtocol(filePath.String())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
