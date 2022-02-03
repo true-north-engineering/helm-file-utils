@@ -2,8 +2,10 @@ name: goreleaser
 
 on:
   push:
+    branches:
+      - 'main'
     tags:
-      - 'v*.*.*'
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -21,8 +23,22 @@ jobs:
         with:
           go-version: 1.17
       -
+        name: Cache Go modules
+        uses: actions/cache@v1
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      -
+        name: Tests
+        run: |
+          go mod tidy
+          go test -v ./...
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
+        if: success() && startsWith(github.ref, 'refs/tags/')
         with:
           version: latest
           args: release -f .goreleaser.yml --rm-dist
