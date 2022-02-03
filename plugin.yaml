@@ -1,8 +1,11 @@
 name: "file-utils"
-version: "v0.0.1"
+version: "0.0.2"
 usage: "File conversions, encoding and decoding utility protocols"
 description: "File conversions, encoding and decoding utility protocols"
 command: "$HELM_PLUGIN_DIR/bin/file-utils"
+hooks:
+  install: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
+  update: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
 downloaders:
   - command: "bin/file-utils"
     protocols:
