@@ -2,6 +2,7 @@
 project_name: helm-file-utils
 builds:
   - env: [CGO_ENABLED=0]
+    binary: ./bin/helm-file-utils
     goos:
       - linux
       - windows
@@ -12,3 +13,8 @@ builds:
     id: "helm-file-utils"
     dir: .
     main: ./cmd
+archive:
+  format: tar.gz
+  files:
+#    - LICENSE
+    - plugin.yaml
