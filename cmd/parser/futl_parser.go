@@ -1,16 +1,17 @@
 package parser
 
 import (
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
+
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 )
 
 const (
 	FUTLPrefix = "futl://"
+	FUTLTag    = "!futl"
 )
 
 func ParseFile(filePath string) (string, error) {
@@ -23,38 +24,51 @@ func ParseFile(filePath string) (string, error) {
 		return "", errors.Errorf("file %s cannot be read", filePath)
 	}
 
-	var yamlBody interface{}
-	err = yaml.Unmarshal(file, &yamlBody)
-
-	yamlBody = expandFile(yamlBody)
-
-	outputYaml, err := yaml.Marshal(yamlBody)
+	var parsedYaml interface{}
+	err = yaml.Unmarshal(file, &FutlTagProcessor{&parsedYaml})
+	if err != nil {
+		return "", err
+	}
+	outputYaml, err := yaml.Marshal(parsedYaml)
+	if err != nil {
+		return "", err
+	}
 	return string(outputYaml), nil
 }
 
-func expandFile(i interface{}) interface{} {
-	switch x := i.(type) {
-	case map[string]interface{}:
-		for k, v := range x {
-			x[k] = expandFile(v)
-		}
-	case []interface{}:
-		for i, v := range x {
-			x[i] = expandFile(v)
-		}
-	case string:
-		var value string
+type FutlTagProcessor struct {
+	source interface{}
+}
 
-		parserFunc, _ := DetermineParser(x)
-		if parserFunc == nil {
-			return x
-		}
-
-		value, err := parserFunc(x)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return value
+func (i *FutlTagProcessor) UnmarshalYAML(node *yaml.Node) error {
+	resolved, err := resolveFutlTags(node)
+	if err != nil {
+		return err
 	}
-	return i
+	return resolved.Decode(i.source)
+}
+
+func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
+	if node.Tag == FUTLTag {
+		fileURL := node.Value
+		parserFunc, err := DetermineParser(fileURL)
+		if err != nil {
+			return nil, err
+		}
+		value, err := parserFunc(fileURL)
+		if err != nil {
+			return nil, err
+		}
+		node.Value = value
+	}
+	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
+		var err error
+		for i := range node.Content {
+			node.Content[i], err = resolveFutlTags(node.Content[i])
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return node, nil
 }
