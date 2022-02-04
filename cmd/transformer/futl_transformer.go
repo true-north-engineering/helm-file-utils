@@ -1,39 +1,38 @@
 package transformer
 
 import (
-	"io/ioutil"
-	"os"
-	"strings"
-
 	"github.com/pkg/errors"
+	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
 	"gopkg.in/yaml.v3"
 )
 
 const (
-	FUTLPrefix = "futl://"
+	FUTLPrefix = "futl"
 	FUTLTag    = "!futl"
 )
 
-func FUTLTransorm(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, FUTLPrefix)
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return "", errors.Errorf("file %s does not exist", filePath)
+func FUTLTransorm(inputValue reader.InputValue) (reader.InputValue, error) {
+	if inputValue.Kind != reader.InputKindFile {
+		return reader.InputValue{}, errors.Errorf("Wrong input type into futl transformer")
 	}
-	file, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return "", errors.Errorf("file %s cannot be read", filePath)
-	}
+	file := inputValue.Value[reader.InputKindFile]
 
 	var parsedYaml interface{}
-	err = yaml.Unmarshal(file, &FutlTagProcessor{&parsedYaml})
+	err := yaml.Unmarshal(file, &FutlTagProcessor{&parsedYaml})
 	if err != nil {
-		return "", err
+		return reader.InputValue{}, err
 	}
 	outputYaml, err := yaml.Marshal(parsedYaml)
 	if err != nil {
-		return "", err
+		return reader.InputValue{}, err
 	}
-	return outputYaml, nil
+	result := reader.InputValue{
+		Kind: reader.InputKindFile,
+		Value: map[string][]byte{
+			reader.InputKindFile: outputYaml,
+		},
+	}
+	return result, nil
 }
 
 type FutlTagProcessor struct {
@@ -51,15 +50,28 @@ func (i *FutlTagProcessor) UnmarshalYAML(node *yaml.Node) error {
 func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
 	if node.Tag == FUTLTag {
 		fileURL := node.Value
-		parserFunc, err := DetermineTransformer(fileURL)
+
+		transformedValue, err := ExecuteTransformations(fileURL)
 		if err != nil {
 			return nil, err
 		}
-		value, err := parserFunc(fileURL)
-		if err != nil {
-			return nil, err
+		if transformedValue.Kind == reader.InputKindFile {
+			node.Value = string(transformedValue.Value[reader.InputKindFile])
+		} else if transformedValue.Kind == reader.InputKindDir {
+			node = &yaml.Node{Kind: yaml.MappingNode}
+
+			for fileName, fileValue := range transformedValue.Value {
+				fileNameNode := &yaml.Node{
+					Kind:  yaml.ScalarNode,
+					Value: fileName,
+				}
+				fileValueNode := &yaml.Node{
+					Kind:  yaml.ScalarNode,
+					Value: string(fileValue),
+				}
+				node.Content = append(node.Content, fileNameNode, fileValueNode)
+			}
 		}
-		node.Value = string(value.([]byte))
 	}
 	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
 		var err error

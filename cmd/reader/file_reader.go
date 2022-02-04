@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	FilePrefix = "file://"
+	FilePrefix = "file"
 )
 
-func ReadFile(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, FilePrefix)
-	file, err := ioutil.ReadFile(filePath)
-	return file, err
+func ReadFile(filePath string) (InputValue, error) {
+	file, err := ioutil.ReadFile(strings.TrimPrefix(filePath, FilePrefix+"://"))
+	result := InputValue{Kind: InputKindFile, Value: make(map[string][]byte)}
+	result.Value[InputKindFile] = file
+	return result, err
 }

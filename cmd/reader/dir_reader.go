@@ -8,35 +8,35 @@ import (
 )
 
 const (
-	DirPrefix = "dir://"
+	DirPrefix = "dir"
 )
 
-func ReadDir(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, DirPrefix)
-	file, err := os.Open(filePath)
+func ReadDir(dir string) (InputValue, error) {
+	path := strings.TrimPrefix(dir, DirPrefix+"://")
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return InputValue{}, err
 	}
 
 	fileInfo, err := file.Stat()
 	if err != nil {
-		return nil, err
+		return InputValue{}, err
 	}
 	if !fileInfo.IsDir() {
-		return nil, errors.Errorf("Specified path is not a directory")
+		return InputValue{}, errors.Errorf("Specified path is not a directory")
 	}
 
 	fileInfos, err := file.Readdir(-1)
 	if err != nil {
-		return nil, err
+		return InputValue{}, err
 	}
-	result := make(map[string][]byte)
+	result := InputValue{Kind: InputKindDir, Value: make(map[string][]byte)}
 	for _, fileInfo := range fileInfos {
-		parsedFile, err := ReadFile(filePath + "/" + fileInfo.Name())
+		parsedFile, err := ReadFile(path + "/" + fileInfo.Name())
 		if err != nil {
-			return nil, err
+			return InputValue{}, err
 		}
-		result[fileInfo.Name()] = parsedFile.([]byte)
+		result.Value[fileInfo.Name()] = parsedFile.Value[InputKindFile]
 	}
 
 	return result, nil

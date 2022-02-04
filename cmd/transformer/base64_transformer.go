@@ -2,27 +2,28 @@ package transformer
 
 import (
 	"encoding/base64"
-	"io/ioutil"
-	"os"
-	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
 )
 
 const (
-	B64EncPrefix = "base64enc://"
+	B64EncPrefix = "base64enc"
 )
 
-func B64ENCTransform(filePath string) (interface{}, error) {
-	filePath = strings.TrimPrefix(filePath, B64EncPrefix)
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return "", errors.Errorf("file %s does not exist", filePath)
+func B64ENCTransform(inputValue reader.InputValue) (reader.InputValue, error) {
+	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
+	if inputValue.Kind == reader.InputKindFile {
+		inputFile := inputValue.Value[reader.InputKindFile]
+		encodedFile := make([]byte, base64.StdEncoding.EncodedLen(len(inputFile)))
+		base64.StdEncoding.Encode(encodedFile, inputFile)
+		result.Value[reader.InputKindFile] = encodedFile
+	} else if inputValue.Kind == reader.InputKindDir {
+		inputFiles := inputValue.Value
+		for fileName, fileValue := range inputFiles {
+			encodedFile := make([]byte, base64.StdEncoding.EncodedLen(len(fileValue)))
+			base64.StdEncoding.Encode(encodedFile, fileValue)
+			result.Value[fileName] = encodedFile
+		}
 	}
-	file, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return "", errors.Errorf("file %s cannot be read", filePath)
-	}
-	encodedFile := make([]byte, base64.StdEncoding.EncodedLen(len(file)))
-	base64.StdEncoding.Encode(encodedFile, file)
-	return encodedFile, nil
+	return result, nil
 }

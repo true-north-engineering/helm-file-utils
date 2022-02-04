@@ -1,22 +1,35 @@
 package reader
 
 import (
+	"errors"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
-type Factory func(filePath string) (interface{}, error)
+var InputSchemes = map[string]bool{
+	DirPrefix:  true,
+	FilePrefix: true,
+}
 
-func DetermineReader(filePath string) (Factory, string, error) {
-	switch {
-	case strings.Contains(filePath, DirPrefix):
-		return ReadDir, "", nil
-	case strings.Contains(filePath, FilePrefix):
-		return ReadFile, "", nil
+const (
+	InputKindFile = "file"
+	InputKindDir  = "dir"
+)
+
+type InputKind string
+
+type InputValue struct {
+	Kind  InputKind
+	Value map[string][]byte
+}
+
+type Factory func(filePath string) (InputValue, error)
+
+func DetermineReader(filePath string) (Factory, error) {
+	if strings.HasPrefix(filePath, DirPrefix) {
+		return ReadDir, nil
+	} else if strings.HasPrefix(filePath, FilePrefix) {
+		return ReadFile, nil
+	} else {
+		return nil, errors.New("Invalid reader scheme")
 	}
-	if !strings.Contains(filePath, "://") {
-		return ReadFile, "", nil
-	}
-	return nil, "", errors.Errorf("error while parsing filepath %s with file utils plugin", filePath)
 }
