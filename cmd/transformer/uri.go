@@ -21,17 +21,21 @@ func ParseURI(uri string) (URI, error) {
 	}
 
 	schemes := strings.Split(uriFragments[0], "+")
-	for i := 0; i < len(schemes); i++ {
+	for i := len(schemes) - 1; i >= 0; i-- {
+		if i == len(schemes)-1 {
+			if !TransformerSchemes[schemes[i]] && !reader.InputSchemes[schemes[i]] {
+				return result, errors.New("Invalid combination of protocol schemes")
+			}
+		} else {
+			if !TransformerSchemes[schemes[i]] || reader.InputSchemes[schemes[i]] {
+				return result, errors.New("Invalid combination of protocol schemes")
+			}
+		}
+
 		if TransformerSchemes[schemes[i]] {
 			result.TransformSchemes = append(result.TransformSchemes, schemes[i])
-		} else {
-			if i != len(schemes)-1 {
-				return result, errors.New("Invalid transformer scheme")
-			} else if !reader.InputSchemes[schemes[i]] {
-				return result, errors.New("Invalid transformer scheme")
-			} else {
-				result.InputURL = schemes[i] + "://" + uriFragments[1]
-			}
+		} else if reader.InputSchemes[schemes[i]] {
+			result.InputURL = schemes[i] + "://" + uriFragments[1]
 		}
 	}
 	if result.InputURL == "" {
