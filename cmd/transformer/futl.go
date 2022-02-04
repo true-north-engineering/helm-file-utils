@@ -1,9 +1,8 @@
-package encoder
+package transformer
 
 import (
 	"github.com/pkg/errors"
 	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
-	"github.com/true-north-engineering/helm-file-utils/cmd/transformer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -52,7 +51,7 @@ func resolveFUTLTags(node *yaml.Node) (*yaml.Node, error) {
 	if node.Tag == FUTLTag {
 		fileURL := node.Value
 
-		transformedValue, err := transformer.ExecuteTransformations(fileURL)
+		transformedValue, err := ExecuteTransformations(fileURL)
 		if err != nil {
 			return nil, err
 		}

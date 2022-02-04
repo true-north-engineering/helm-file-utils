@@ -2,15 +2,14 @@ package transformer
 
 import (
 	"errors"
-	"github.com/true-north-engineering/helm-file-utils/cmd/transformer/encoder"
 	"strings"
 
 	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
 )
 
 var schemesMap = map[string]bool{
-	encoder.B64EncPrefix: true,
-	encoder.FUTLPrefix:   true,
+	B64EncPrefix: true,
+	FUTLPrefix:   true,
 }
 
 type Factory func(inputValue reader.InputValue) (reader.InputValue, error)
@@ -54,10 +53,10 @@ func ParseURI(uri string) (URI, error) {
 
 func DetermineTransformer(scheme string) (Factory, error) {
 	switch {
-	case scheme == encoder.B64EncPrefix:
-		return encoder.B64ENCTransform, nil
-	case scheme == encoder.FUTLPrefix:
-		return encoder.FUTLTransform, nil
+	case scheme == B64EncPrefix:
+		return B64ENCTransform, nil
+	case scheme == FUTLPrefix:
+		return FUTLTransform, nil
 	}
 	return nil, errors.New("transform scheme not found")
 }

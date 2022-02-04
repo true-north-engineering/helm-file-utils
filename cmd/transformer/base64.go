@@ -1,4 +1,4 @@
-package encoder
+package transformer
 
 import (
 	"encoding/base64"
