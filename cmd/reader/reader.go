@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-var InputSchemes = map[string]bool{
-	DirPrefix:  true,
+var InputSchemesMap = map[string]bool{
+	dirPrefix:  true,
 	FilePrefix: true,
 }
 
@@ -25,11 +25,11 @@ type InputValue struct {
 type Factory func(filePath string) (InputValue, error)
 
 func DetermineReader(filePath string) (Factory, error) {
-	if strings.HasPrefix(filePath, DirPrefix) {
+	if strings.HasPrefix(filePath, dirPrefix) {
 		return ReadDir, nil
 	} else if strings.HasPrefix(filePath, FilePrefix) {
 		return ReadFile, nil
 	} else {
-		return nil, errors.New("Invalid reader scheme")
+		return nil, errors.New("invalid reader scheme")
 	}
 }

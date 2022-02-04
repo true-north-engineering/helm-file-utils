@@ -12,15 +12,13 @@ import (
 func main() {
 	if len(os.Args) < 5 {
 		log.Fatal("error while running file utils plugin, filepath argument is not correctly specified.")
-		os.Exit(1)
 	}
 	result, err := transformer.ExecuteTransformations(os.Args[4])
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 	if result.Kind != reader.InputKindFile {
-		log.Fatal("Dir scheme awailable only inside futl parsed yaml file")
+		log.Fatal("error dir scheme available only inside futl parsed yaml file")
 	}
 	fmt.Println(string(result.Value[reader.InputKindFile]))
 }

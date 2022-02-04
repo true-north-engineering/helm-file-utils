@@ -1,8 +1,9 @@
-package transformer
+package encoder
 
 import (
 	"github.com/pkg/errors"
 	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
+	"github.com/true-north-engineering/helm-file-utils/cmd/transformer"
 	"gopkg.in/yaml.v3"
 )
 
@@ -11,14 +12,14 @@ const (
 	FUTLTag    = "!futl"
 )
 
-func FUTLTransorm(inputValue reader.InputValue) (reader.InputValue, error) {
+func FUTLTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 	if inputValue.Kind != reader.InputKindFile {
-		return reader.InputValue{}, errors.Errorf("Wrong input type into futl transformer")
+		return reader.InputValue{}, errors.Errorf("wrong input type into futl transformer")
 	}
 	file := inputValue.Value[reader.InputKindFile]
 
 	var parsedYaml interface{}
-	err := yaml.Unmarshal(file, &FutlTagProcessor{&parsedYaml})
+	err := yaml.Unmarshal(file, &FUTLTagProcessor{&parsedYaml})
 	if err != nil {
 		return reader.InputValue{}, err
 	}
@@ -35,23 +36,23 @@ func FUTLTransorm(inputValue reader.InputValue) (reader.InputValue, error) {
 	return result, nil
 }
 
-type FutlTagProcessor struct {
+type FUTLTagProcessor struct {
 	source interface{}
 }
 
-func (i *FutlTagProcessor) UnmarshalYAML(node *yaml.Node) error {
-	resolved, err := resolveFutlTags(node)
+func (i *FUTLTagProcessor) UnmarshalYAML(node *yaml.Node) error {
+	resolved, err := resolveFUTLTags(node)
 	if err != nil {
 		return err
 	}
 	return resolved.Decode(i.source)
 }
 
-func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
+func resolveFUTLTags(node *yaml.Node) (*yaml.Node, error) {
 	if node.Tag == FUTLTag {
 		fileURL := node.Value
 
-		transformedValue, err := ExecuteTransformations(fileURL)
+		transformedValue, err := transformer.ExecuteTransformations(fileURL)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +77,7 @@ func resolveFutlTags(node *yaml.Node) (*yaml.Node, error) {
 	if node.Kind == yaml.SequenceNode || node.Kind == yaml.MappingNode {
 		var err error
 		for i := range node.Content {
-			node.Content[i], err = resolveFutlTags(node.Content[i])
+			node.Content[i], err = resolveFUTLTags(node.Content[i])
 			if err != nil {
 				return nil, err
 			}

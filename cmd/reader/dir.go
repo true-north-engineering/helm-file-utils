@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	DirPrefix = "dir"
+	dirPrefix = "dir"
 )
 
 func ReadDir(dir string) (InputValue, error) {
-	path := strings.TrimPrefix(dir, DirPrefix+"://")
+	path := strings.TrimPrefix(dir, dirPrefix+"://")
 	file, err := os.Open(path)
 	if err != nil {
 		return InputValue{}, err
@@ -23,7 +23,7 @@ func ReadDir(dir string) (InputValue, error) {
 		return InputValue{}, err
 	}
 	if !fileInfo.IsDir() {
-		return InputValue{}, errors.Errorf("Specified path is not a directory")
+		return InputValue{}, errors.Errorf("the specified path %s is not a directory", path)
 	}
 
 	fileInfos, err := file.Readdir(-1)
