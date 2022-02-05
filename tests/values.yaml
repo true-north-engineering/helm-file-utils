@@ -1,0 +1,10 @@
+aaa: bbb
+cm: 
+  - name: eqwewq
+    file: !futl base64enc+dir://scripts
+  - name: pokopk
+    eee: aaa
+ccc:
+  ddd: eee
+  rrr:
+    ajl: !futl file://README.md

@@ -2,27 +2,23 @@ package main
 
 import (
 	"fmt"
-	"github.com/true-north-engineering/helm-file-utils/cmd/parser"
+	"log"
 	"os"
-)
 
-//var version = "Version is not provided"
+	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
+	"github.com/true-north-engineering/helm-file-utils/cmd/transformer"
+)
 
 func main() {
 	if len(os.Args) < 5 {
-		fmt.Println("error while running file utils plugin, filepath argument is not correctly specified.")
-		os.Exit(1)
+		log.Fatal("error while running file utils plugin, filepath argument is not correctly specified.")
 	}
-	filePath := os.Args[4]
-	transformByProtocol, err := parser.DetermineParser(filePath)
+	result, err := transformer.ExecuteTransformations(os.Args[4])
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	parsedValue, err := transformByProtocol(filePath)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	if result.Kind != reader.InputKindFile {
+		log.Fatal("error dir scheme available only inside futl parsed yaml file")
 	}
-	fmt.Println(parsedValue)
+	fmt.Println(string(result.Value[reader.InputKindFile]))
 }
