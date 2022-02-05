@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/binary"
 	"log"
 	"os"
 
@@ -20,5 +20,5 @@ func main() {
 	if result.Kind != reader.InputKindFile {
 		log.Fatal("error dir scheme available only inside futl parsed yaml file")
 	}
-	fmt.Println(string(result.Value[reader.InputKindFile]))
+	binary.Write(os.Stdout, binary.LittleEndian, result.Value[reader.InputKindFile])
 }
