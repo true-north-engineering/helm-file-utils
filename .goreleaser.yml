@@ -1,8 +1,8 @@
 # .goreleaser.yml
-project_name: helm-file-utils
+project_name: file-utils
 builds:
   - env: [CGO_ENABLED=0]
-    binary: ./bin/helm-file-utils
+    binary: ./bin/file-utils
     goos:
       - linux
       - windows
@@ -10,11 +10,14 @@ builds:
     goarch:
       - amd64
       - arm64
-    id: "helm-file-utils"
+    id: "file-utils"
     dir: .
     main: ./cmd
 archives:
   - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     files:
       - plugin.yaml
       - README.md
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"

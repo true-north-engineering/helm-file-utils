@@ -12,11 +12,11 @@ echo "Downloading and installing helm-charts-plugin v${version} ..."
 
 url=""
 if [ "$(uname)" = "Darwin" ]; then
-    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_${version}_darwin_amd64.tar.gz"
+    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_darwin_amd64.tar.gz"
 elif [ "$(uname)" = "Linux" ] ; then
-    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_${version}_linux_amd64.tar.gz"
+    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_linux_amd64.tar.gz"
 else
-    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_${version}_windows_amd64.tar.gz"
+    url="https://github.com/true-north-engineering/helm-file-utils/releases/download/v${version}/helm-file-utils_windows_amd64.tar.gz"
 fi
 
 echo $url
