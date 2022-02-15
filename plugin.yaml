@@ -1,5 +1,5 @@
 name: "file-utils"
-version: "0.1.3"
+version: "0.1.2"
 usage: "File conversions, encoding and decoding utility protocols"
 description: "File conversions, encoding and decoding utility protocols"
 command: "$HELM_PLUGIN_DIR/bin/file-utils"
