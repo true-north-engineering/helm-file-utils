@@ -2,3 +2,4 @@
 /bin/test/
 /.vscode
 /values.yaml
+/push_and_tag.sh

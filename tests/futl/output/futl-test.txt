@@ -1,0 +1,12 @@
+aaa: bbb
+ccc:
+    ddd: eee
+    rrr:
+        ajl: '"This is input file number 3."'
+cm:
+    - file:
+        inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
+        inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
+      name: eqwewq
+    - eee: aaa
+      name: pokopk

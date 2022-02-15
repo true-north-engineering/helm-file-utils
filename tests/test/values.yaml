@@ -1,0 +1,5 @@
+external: true
+key: adfsfasf
+glob:
+  enabled: false
+  path: "*"

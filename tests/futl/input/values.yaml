@@ -1,10 +1,10 @@
 aaa: bbb
-cm: 
+cm:
   - name: eqwewq
-    file: !futl base64enc+dir://../../scripts
+    file: !futl base64enc+dir://../../tests/dirtest
   - name: pokopk
     eee: aaa
 ccc:
   ddd: eee
   rrr:
-    ajl: !futl file://../../README.md
+    ajl: !futl file://../../tests/filetest/inputfile3.txt

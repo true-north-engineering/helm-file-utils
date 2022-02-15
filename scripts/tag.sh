@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 # shellcheck disable=SC2002
-tag="$(cat plugin.yaml | grep "version" | cut -d '"' -f 2)"
+tag="$(cat plugin.yaml | grep "version:" | cut -d '"' -f 2)"
 echo "Tagging helm-file-utils with v${tag} ..."
 
 git checkout master

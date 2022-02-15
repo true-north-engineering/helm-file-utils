@@ -7,4 +7,4 @@ cm:
 ccc:
   ddd: eee
   rrr:
-    ajl: !futl file://README.md
+    ajl: !futl custom+file://README.md /home/banana/mytransform

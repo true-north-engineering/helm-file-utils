@@ -13,7 +13,7 @@ func TestFUTLDownloaderPlugin(t *testing.T) {
 		{
 			name:   "chart with template with external dir",
 			input:  "futl://../../tests/futl/input/values.yaml",
-			golden: "../../tests/futl/output/futl-file-parsing.txt",
+			golden: "../../tests/futl/output/futl-test.txt",
 		},
 	}
 	runTestCmd(t, tests)
