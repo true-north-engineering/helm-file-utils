@@ -50,7 +50,7 @@ Template for chaining file transformations is:
 ##Example usage
 
 ````bash
-helm install -f futl://home/usr/files /home/usr/charts
+helm install -f futl://home/usr/files /home/usr/charts/Chart.yaml
 ````
 
 ```bash
@@ -74,4 +74,17 @@ example_file:
 example_dir: 
   - name: example_dir
     file: !futl base64enc+dir://example_dir
+```
+
+```bash
+#Chart.yaml
+#this is just an example of a simple Chart file that is provided
+apiVersion: v1
+appVersion: "1.0"
+description: Deploy a basic Chart Config Map
+home: https://helm.sh/helm
+name: example_chart
+sources:
+- https://github.com/helm/helm
+version: 0.1.0
 ```
