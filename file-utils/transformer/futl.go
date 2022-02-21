@@ -2,7 +2,7 @@ package transformer
 
 import (
 	"github.com/pkg/errors"
-	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
+	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"gopkg.in/yaml.v3"
 )
 

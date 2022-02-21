@@ -3,7 +3,7 @@ package transformer
 import (
 	"bytes"
 	"github.com/pkg/errors"
-	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
+	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"io/ioutil"
 	"testing"
 )
@@ -52,7 +52,7 @@ type cmdTestCase struct {
 	wantError bool
 }
 
-// assertGoldenString asserts that the given string matches the contents of the given file.
+// AssertGoldenString asserts that the given string matches the contents of the given file.
 func assertGoldenString(actual, filename string) error {
 	if err := compare([]byte(actual), filename); err != nil {
 		return err

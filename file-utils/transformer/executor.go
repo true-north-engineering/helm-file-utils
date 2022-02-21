@@ -1,10 +1,9 @@
 package transformer
 
 import (
+	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"log"
 	"os"
-
-	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
 )
 
 func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
