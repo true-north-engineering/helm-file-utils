@@ -6,8 +6,10 @@ import (
 )
 
 var InputSchemesMap = map[string]bool{
-	dirPrefix:  true,
-	FilePrefix: true,
+	dirPrefix:   true,
+	FilePrefix:  true,
+	HttpsPrefix: true,
+	HttpPrefix:  true,
 }
 
 const (
@@ -25,11 +27,16 @@ type InputValue struct {
 type Factory func(filePath string) (InputValue, error)
 
 func DetermineReader(filePath string) (Factory, error) {
-	if strings.HasPrefix(filePath, dirPrefix) {
+	switch {
+	case strings.HasPrefix(filePath, dirPrefix):
 		return ReadDir, nil
-	} else if strings.HasPrefix(filePath, FilePrefix) {
+	case strings.HasPrefix(filePath, FilePrefix):
 		return ReadFile, nil
-	} else {
+	case strings.HasPrefix(filePath, HttpsPrefix):
+		return ReadHttps, nil
+	case strings.HasPrefix(filePath, HttpPrefix):
+		return ReadHttps, nil
+	default:
 		return nil, errors.New("invalid reader scheme")
 	}
 }
