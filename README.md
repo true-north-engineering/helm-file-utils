@@ -23,7 +23,7 @@ associate plugin with given file directory is **futl**.
 
 Basic usage of plugin is as it follows:
 ````bash
-helm install -f futl://path/to/yaml/file /path/to/chart/file
+helm install [NAME] [CHART] [flags] -f futl://path/to/values.yaml
 ````
 
 ### File transformations
@@ -50,7 +50,7 @@ Template for chaining file transformations is:
 ##Example usage
 
 ````bash
-helm install -f futl://home/usr/files /home/usr/charts/Chart.yaml
+helm install [NAME] [CHART] [flags] -f futl://home/usr/files 
 ````
 
 ```bash
