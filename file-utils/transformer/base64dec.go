@@ -26,7 +26,6 @@ func B64DECTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 			if err != nil {
 				return reader.InputValue{}, err
 			}
-			result.Value[reader.InputKindFile] = decodedFile
 			result.Value[fileName] = decodedFile
 		}
 	}

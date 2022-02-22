@@ -1,4 +1,4 @@
 ccc:
   ddd: eee
   rrr:
-    ajl: !futl base64enc://../../tests/filetest/inputfile3.txt
+    ajl: !futl base64dec+base64enc://../../tests/filetest/inputfile3.txt

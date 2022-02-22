@@ -2,7 +2,7 @@ package transformer
 
 import (
 	"errors"
-	reader2 "github.com/true-north-engineering/helm-file-utils/file-utils/reader"
+	reader "github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ var schemesMap = map[string]bool{
 	FUTLPrefix:   true,
 }
 
-type Factory func(inputValue reader2.InputValue) (reader2.InputValue, error)
+type Factory func(inputValue reader.InputValue) (reader.InputValue, error)
 
 type URI struct {
 	TransformSchemes []string
@@ -30,23 +30,23 @@ func ParseURI(uri string) (URI, error) {
 	schemes := strings.Split(uriFragments[0], "+")
 	for i := len(schemes) - 1; i >= 0; i-- {
 		if i == len(schemes)-1 {
-			if !schemesMap[schemes[i]] && !reader2.InputSchemesMap[schemes[i]] {
+			if !schemesMap[schemes[i]] && !reader.InputSchemesMap[schemes[i]] {
 				return result, errors.New("invalid combination of protocol schemes")
 			}
 		} else {
-			if !schemesMap[schemes[i]] || reader2.InputSchemesMap[schemes[i]] {
+			if !schemesMap[schemes[i]] || reader.InputSchemesMap[schemes[i]] {
 				return result, errors.New("invalid combination of protocol schemes")
 			}
 		}
 
 		if schemesMap[schemes[i]] {
 			result.TransformSchemes = append(result.TransformSchemes, schemes[i])
-		} else if reader2.InputSchemesMap[schemes[i]] {
+		} else if reader.InputSchemesMap[schemes[i]] {
 			result.InputURL = schemes[i] + "://" + uriFragments[1]
 		}
 	}
 	if result.InputURL == "" {
-		result.InputURL = reader2.FilePrefix + "://" + uriFragments[1]
+		result.InputURL = reader.FilePrefix + "://" + uriFragments[1]
 	}
 	return result, nil
 }
