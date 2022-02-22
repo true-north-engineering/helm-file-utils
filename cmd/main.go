@@ -2,11 +2,10 @@ package main
 
 import (
 	"encoding/binary"
+	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
+	"github.com/true-north-engineering/helm-file-utils/file-utils/transformer"
 	"log"
 	"os"
-
-	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
-	"github.com/true-north-engineering/helm-file-utils/cmd/transformer"
 )
 
 func main() {

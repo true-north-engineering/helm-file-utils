@@ -2,8 +2,7 @@ package transformer
 
 import (
 	"encoding/base64"
-
-	"github.com/true-north-engineering/helm-file-utils/cmd/reader"
+	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 )
 
 const (
