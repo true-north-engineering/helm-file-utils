@@ -8,6 +8,7 @@ import (
 
 var schemesMap = map[string]bool{
 	B64EncPrefix: true,
+	B64DecPrefix: true,
 	FUTLPrefix:   true,
 }
 
@@ -54,6 +55,8 @@ func DetermineTransformer(scheme string) (Factory, error) {
 	switch {
 	case scheme == B64EncPrefix:
 		return B64ENCTransform, nil
+	case scheme == B64DecPrefix:
+		return B64DECTransform, nil
 	case scheme == FUTLPrefix:
 		return FUTLTransform, nil
 	}
