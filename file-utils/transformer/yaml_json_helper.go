@@ -1,10 +1,5 @@
 package transformer
 
-import (
-	"fmt"
-	"path/filepath"
-)
-
 // Allows YAML to be encoded into JSON format easily.
 func cleanYaml(yamlData map[interface{}]interface{}) map[string]interface{} {
 
@@ -43,28 +38,4 @@ func cleanYaml(yamlData map[interface{}]interface{}) map[string]interface{} {
 	}
 
 	return cleanYamlMapping
-}
-
-// IsYAMLFile checks whether a specified file is YAML.
-func IsYAMLFile(filePath string) (bool, error) {
-
-	fileType := filepath.Ext(filePath)
-
-	if fileType == ".yml" || fileType == ".yaml" {
-		return true, nil
-	}
-	fmt.Println("nije yaml")
-	fmt.Println(fileType)
-	return false, fmt.Errorf("given file is not yaml file")
-}
-
-// IsJSONFile checks whether a specified file is JSON.
-func IsJSONFile(filePath string) (bool, error) {
-
-	fileType := filepath.Ext(filePath)
-	if fileType == ".json" {
-		return true, nil
-	}
-
-	return false, fmt.Errorf("given file is not json file")
 }
