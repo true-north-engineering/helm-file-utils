@@ -1,0 +1,4 @@
+ccc:
+  ddd: eee
+  rrr:
+    ajl: !futl yaml2json+json2yaml://../../tests/filetest/inputfile_json.json

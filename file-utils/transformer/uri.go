@@ -7,9 +7,11 @@ import (
 )
 
 var schemesMap = map[string]bool{
-	B64EncPrefix: true,
-	B64DecPrefix: true,
-	FUTLPrefix:   true,
+	B64EncPrefix:    true,
+	B64DecPrefix:    true,
+	Json2YamlPrefix: true,
+	Yaml2JsonPrefix: true,
+	FUTLPrefix:      true,
 }
 
 type Factory func(inputValue reader.InputValue) (reader.InputValue, error)
@@ -57,6 +59,10 @@ func DetermineTransformer(scheme string) (Factory, error) {
 		return B64ENCTransform, nil
 	case scheme == B64DecPrefix:
 		return B64DECTransform, nil
+	case scheme == Json2YamlPrefix:
+		return Json2YamlTransform, nil
+	case scheme == Yaml2JsonPrefix:
+		return Yaml2JsonTransform, nil
 	case scheme == FUTLPrefix:
 		return FUTLTransform, nil
 	}

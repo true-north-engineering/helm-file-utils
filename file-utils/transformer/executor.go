@@ -7,6 +7,7 @@ import (
 )
 
 func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
+
 	fileURI, err := ParseURI(fileURIString)
 
 	if err != nil {
@@ -22,6 +23,7 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 	}
 
 	for _, transformScheme := range fileURI.TransformSchemes {
+
 		transformByProtocol, err := DetermineTransformer(transformScheme)
 
 		if err != nil {
