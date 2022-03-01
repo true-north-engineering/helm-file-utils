@@ -30,16 +30,15 @@ helm install [NAME] [CHART] [flags] -f futl://path/to/values.yaml
 
 In given `.yaml` or `.yml` file, multiple file transformations are possible.
 Transformations are classified in two categories - Transformers(**T**) and Readers(**R**). 
-Every command needs to consist of **at most** one Reader and **at least** one Transformer separated with **+** sign.
+Every command needs to consist of **at most** one Reader and optional Transformers separated with **+** sign.
 Order of transformation evaluation is from right to left, which forces Reader to always execute first.
 
 **Reader**\
 Used to read the file from given destination. If none is provided, **file** is considered as default.\
-Available Readers: **file, dir, ~~http(s)~~, ~~git~~**
-
+Available Readers: **file, dir
 **Transformer**\
 Transformers are used to do various transformations over the file.\
-Available Transformers: **base64enc, ~~base64dec, xslt, custom~~**
+Available Transformers: **base64enc, base64dec**
 
 Template for chaining file transformations is:
 ````bash
