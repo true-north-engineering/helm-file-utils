@@ -16,6 +16,7 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 	}
 
 	readByProtocol, err := reader.DetermineReader(fileURI.InputURL)
+
 	inputValue, err := readByProtocol(fileURI.InputURL)
 	if err != nil {
 		log.Fatal(err)
@@ -33,6 +34,7 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 		if err != nil {
 			return reader.InputValue{}, err
 		}
+
 		inputValue = parsedValue
 	}
 	return inputValue, nil

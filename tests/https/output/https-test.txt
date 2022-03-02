@@ -1,0 +1,4 @@
+ccc:
+    ddd: eee
+    rrr:
+        ajl: Y2NjOgogIGRkZDogZWVlCiAgcnJyOgogICAgYWpsOiAhZnV0bCBiYXNlNjRlbmM6Ly8uLi8uLi90ZXN0cy9maWxldGVzdC9pbnB1dGZpbGUzLnR4dAo=
