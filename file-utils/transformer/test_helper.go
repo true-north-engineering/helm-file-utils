@@ -38,12 +38,15 @@ func runTestCmd(t *testing.T, tests []cmdTestCase) {
 			t.Logf("running test : %s", tt.name)
 
 			out, err := executeActionCommand(tt.input)
+
 			if (err != nil) != tt.wantError {
 				t.Errorf("expected error, got '%v'", err)
 			} else if err != nil {
+
 				t.Errorf("got error '%v'", err)
 				return
 			}
+
 			if tt.golden != "" {
 				err := assertGoldenString(out, tt.golden)
 				if err != nil {

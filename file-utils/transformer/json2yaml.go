@@ -14,13 +14,25 @@ const (
 func Json2YamlTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
-	yamlfile, err := JSONToYAMLFull(inputValue.Value[reader.InputKindFile])
 
-	if err != nil {
-		return reader.InputValue{}, err
+	if inputValue.Kind == reader.InputKindFile {
+		yamlfile, err := JSONToYAMLFull(inputValue.Value[reader.InputKindFile])
+
+		if err != nil {
+			return reader.InputValue{}, err
+		}
+		result.Value[reader.InputKindFile] = yamlfile
+	} else if inputValue.Kind == reader.InputKindDir {
+		inputFiles := inputValue.Value
+		for fileName, fileValue := range inputFiles {
+			yamlfile, err := JSONToYAMLFull(fileValue)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			result.Value[fileName] = yamlfile
+		}
 	}
-
-	result.Value[reader.InputKindFile] = yamlfile
 
 	return result, nil
 }

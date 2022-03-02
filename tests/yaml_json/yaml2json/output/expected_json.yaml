@@ -3,8 +3,8 @@ ccc:
     rrr:
         ajl: |-
             {
-            	"json": [
-            		"simpletest",
-            		"to see if this works"
-            	]
+              "json": [
+                "simpletest",
+                "to see if this works"
+              ]
             }

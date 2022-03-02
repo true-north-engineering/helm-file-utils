@@ -1,7 +1,7 @@
 aaa: bbb
 cm:
   - name: eqwewq
-    file: !futl base64enc+dir://../../tests/dirtest
+    file: !futl base64enc+dir://../../tests/dirtest/file
   - name: pokopk
     eee: aaa
 ccc:

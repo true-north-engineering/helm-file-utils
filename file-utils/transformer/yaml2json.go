@@ -14,13 +14,25 @@ const (
 func Yaml2JsonTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
-	jsonfile, err := YAMLToJSONFull(inputValue.Value[reader.InputKindFile])
 
-	if err != nil {
-		return reader.InputValue{}, err
+	if inputValue.Kind == reader.InputKindFile {
+		jsonfile, err := YAMLToJSONFull(inputValue.Value[reader.InputKindFile])
+
+		if err != nil {
+			return reader.InputValue{}, err
+		}
+		result.Value[reader.InputKindFile] = jsonfile
+	} else if inputValue.Kind == reader.InputKindDir {
+		inputFiles := inputValue.Value
+		for fileName, fileValue := range inputFiles {
+			jsonfile, err := YAMLToJSONFull(fileValue)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			result.Value[fileName] = jsonfile
+		}
 	}
-
-	result.Value[reader.InputKindFile] = jsonfile
 
 	return result, nil
 }
@@ -30,7 +42,7 @@ func ConvertYAMLToJSON(yamlData map[interface{}]interface{}) ([]byte, error) {
 
 	cleanedYaml := cleanYaml(yamlData)
 
-	output, err := json.MarshalIndent(cleanedYaml, "", "\t")
+	output, err := json.MarshalIndent(cleanedYaml, "", "  ")
 	if err != nil {
 		return nil, fmt.Errorf("error converting yaml to json: %s", err.Error())
 	}
