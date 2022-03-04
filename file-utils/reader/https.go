@@ -11,7 +11,6 @@ const (
 )
 
 func ReadHttps(httpPath string) (InputValue, error) {
-
 	resp, err := http.Get(httpPath)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
