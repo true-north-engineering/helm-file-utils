@@ -23,14 +23,13 @@ builds:
       - arm
       - arm64
 archives:
-  - replacements:
+  - format: tar.gz
+    replacements:
       darwin: macOS
       linux: Linux
       windows: Windows
       386: i386
       amd64: x86_64
-
-  - format: tar.gz
     files:
       - README.md
       - LICENSE
