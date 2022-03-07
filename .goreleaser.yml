@@ -24,17 +24,18 @@ builds:
       - arm64
 archives:
   - format: tar.gz
-    replacements:
-      darwin: macOS
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
     files:
       - README.md
       - LICENSE
       - plugin.yaml
-      - scripts/install.sh
+      - scripts/install_plugin.sh
+#    replacements:
+#      darwin: macOS
+#      linux: Linux
+#      windows: Windows
+#      386: i386
+#      amd64: x86_64
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
