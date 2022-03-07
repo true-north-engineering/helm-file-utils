@@ -32,8 +32,8 @@ else
 fi
 
 tar xzf "releases/v${version}.tar.gz" -C "releases/v${version}"
-mv "releases/v${version}/helm-file-utils" "bin/helm-file-utils" || \
-    mv "releases/v${version}/helm-file-utils.exe" "bin/helm-file-utils"
+mv "releases/v${version}/file-utils" "bin/file-utils" || \
+    mv "releases/v${version}/file-utils.exe" "bin/file-utils"
 mv "releases/v${version}/plugin.yaml" .
 mv "releases/v${version}/README.md" .
 mv "releases/v${version}/LICENSE" .
