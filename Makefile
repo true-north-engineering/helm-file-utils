@@ -1,38 +1,33 @@
 EXECUTABLE ?= helm-file-utils
-GO ?= go
-ARCHS ?= amd64 386
-LDFLAGS ?= -X 'main.version=$(VERSION)'
-GOFILES := $(shell find . -name "*.go" -type f)
-OUTPUT_DIR ?= ./bin/release/
-
-ifneq ($(TAG),)
-	VERSION ?= $(TAG)
-else
-	VERSION ?= $(shell git describe --tags --always || git rev-parse --short HEAD)
-endif
-
-VERSION := $(VERSION)
+OUTPUT_DIR ?= ./dist
 
 .PHONY: build
-build: clean $(EXECUTABLE)
+build:
+	CGO_ENABLED=0 go build -o $(OUTPUT_DIR)/$(EXECUTABLE) ./cmd
 
-.PHONY: $(EXECUTABLE)
-$(EXECUTABLE): $(GOFILES)
-	CGO_ENABLED=0 GOOS=linux $(GO) build -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -v -a -installsuffix cgo -o ./bin/file-utils ./cmd
-	@echo "Done."
+.PHONY: tidy
+tidy:
+	rm -fr go.sum
+	go mod tidy -compat=1.17
 
-.PHONY: build_darwin
-build_darwin:
-	GOOS=darwin $(GO) build -v -ldflags '$(EXTLDFLAGS)-s -w $(LDFLAGS)' -o ./bin/release/$@ ./cmd
+.PHONY: fmt
+fmt:
+	go fmt ./...
 
-.PHONY: unit_tests
-unit_tests:
-	$(GO) test --short -race -v ./...
+.PHONY: tests
+tests:
+	go test --short -race -v ./...
 
 .PHONY: clean
 clean:
-	rm -rf ${OUTPUT_DIR}
+	rm -rf $(OUTPUT_DIR)
 
 .PHONY: version
 version:
 	@echo $(VERSION)
+
+.PHONY: addlicense
+addlicense:
+	go install github.com/google/addlicense@latest && \
+		addlicense -c "True North <info@true-north.hr>" -l apache -v ./
+
