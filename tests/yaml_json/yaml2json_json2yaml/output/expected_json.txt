@@ -1,0 +1,18 @@
+ccc:
+    ddd: eee
+    rrr:
+        ajl:
+            json_input1.json: |-
+                {
+                  "json": [
+                    "json test 1",
+                    "to see if this works"
+                  ]
+                }
+            json_input2.json: |-
+                {
+                  "json": [
+                    "json test 2",
+                    "this should also work"
+                  ]
+                }
