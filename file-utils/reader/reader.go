@@ -6,8 +6,11 @@ import (
 )
 
 var InputSchemesMap = map[string]bool{
-	dirPrefix:  true,
-	FilePrefix: true,
+	dirPrefix:   true,
+	FilePrefix:  true,
+	HttpsPrefix: true,
+	HttpPrefix:  true,
+	SshPrefix:   true,
 }
 
 const (
