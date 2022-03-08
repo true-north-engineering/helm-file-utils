@@ -121,17 +121,6 @@ func ReadSsh(sshPath string) (InputValue, error) {
 	return result, nil
 }
 
-func Challenge(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
-	answers = make([]string, len(questions))
-	for n, q := range questions {
-		fmt.Printf("Got question: %s\n", q)
-		answers[n] = suitable_answers[pwIdx]
-	}
-	pwIdx++
-
-	return answers, nil
-}
-
 func checkForPublicKeys() ssh.Signer {
 	//get default HOME environment variable
 	//e.g. default is /home/user
@@ -168,11 +157,6 @@ func getPubFile(homeEnv string) string {
 	return DefaultPubFile
 }
 
-func promptUser(user string, instruction string, questions []string, echos []bool) ssh.KeyboardInteractiveChallenge {
-
-	return nil
-}
-
 func getUsername() string {
 	var userInput, user string
 	if env, ok := os.LookupEnv("FUTL_SSH_USER"); ok == true {
@@ -195,8 +179,10 @@ func getPassword() (string, error) {
 		return env, nil
 	} else {
 		if len(splitUserAndPassword) != 2 {
+
 			fmt.Print("enter password: ")
 			fmt.Scanln(&userInput)
+
 			return userInput, nil
 		}
 		password = splitUserAndPassword[1]
