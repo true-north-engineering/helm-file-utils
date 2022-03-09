@@ -1,0 +1,6 @@
+ccc:
+    ddd: eee
+    rrr:
+        ajl:
+            inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
+            inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
