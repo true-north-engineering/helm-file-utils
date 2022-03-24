@@ -1,4 +1,4 @@
 ccc:
   ddd: eee
   rrr:
-    ajl: !futl ssh://../../tests/filetest/inputfile4.txt
+    ajl: !futl base64enc+ssh://fileutils@localhost:/ssh_test/inputfile.txt
