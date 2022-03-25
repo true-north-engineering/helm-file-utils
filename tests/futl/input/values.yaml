@@ -7,4 +7,4 @@ cm:
 ccc:
   ddd: eee
   rrr:
-    ajl: !futl file://../../tests/filetest/inputfile3.txt
+    ajl: !futl ../../tests/filetest/inputfile3.txt

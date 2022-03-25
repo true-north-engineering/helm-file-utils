@@ -1,16 +1,17 @@
 package reader
 
 import (
+	"bufio"
 	"fmt"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/knownhosts"
+	"golang.org/x/term"
 	"io/ioutil"
 	"log"
-	"net"
 	"os"
 	"os/exec"
-	"path/filepath"
+	"regexp"
 	"strings"
+	"syscall"
 )
 
 const (
@@ -19,85 +20,38 @@ const (
 	DefaultPubFile = "id_ed25519"
 )
 
-var splitScp []string
-var splitUserAndPassword []string
-
-var suitable_answers = []string{"bogus password", "real password"}
-var pwIdx = 0
+var regexMapSsh = make(map[string]string)
 
 func ReadSsh(sshPath string) (InputValue, error) {
 
-	//trim given input
-	//e.g. ssh://user@localhost to user@localhost
-	scp := strings.TrimPrefix(sshPath, SshPrefix+"://")
+	regex := regexp.MustCompile("(((?P<Username>[^:]+)(:(?P<Password>[^:]+))?)@)?(?P<Hostname>[[:ascii:]]*):(?P<Port>\\d*)\\/((?P<Path>[[:ascii:]]*))")
 
-	//split given input
-	//e.g. userPassword@localhostPort to [userPassword, localhostPort]
-	splitScp = strings.Split(scp, "@")
+	regexResult := regex.FindStringSubmatch(strings.TrimPrefix(sshPath, GitHttpsPrefix+"://"))
 
-	//error if input is incompatible
-	if len(splitScp) > 2 || len(scp) < 1 {
-		return InputValue{}, fmt.Errorf("error parsing ssh : check given values")
+	for i, name := range regex.SubexpNames() {
+		if i != 0 && name != "" {
+			regexMapSsh[name] = regexResult[i]
+		}
 	}
 
-	//split given userPassword if exists
-	//e.g. userPassword to [user, password]
-	if len(splitScp) == 2 {
-		splitUserAndPassword = strings.Split(splitScp[0], ":")
-	}
-
-	//split given localhostPort
-	//e.g. localhostPortFile to [localhost, portFile]
-	splitHostAndPort := strings.Split(splitScp[len(splitScp)-1], ":")
-
-	var hostname, port, path string
-	var firstSlash int
-
-	hostname = splitHostAndPort[0]
-
-	firstSlash = strings.Index(splitHostAndPort[1], "/")
-
-	port = func() string {
-		if firstSlash == 0 {
+	port := func() string {
+		if regexMapSsh["Port"] == "" {
 			return DefaultPort
 		} else {
-			return splitHostAndPort[1][:firstSlash]
+			return regexMapSsh["Port"]
 		}
 	}()
 
-	path = splitHostAndPort[1][firstSlash:]
-	// var keyErr *knownhosts.KeyError
-
 	config := &ssh.ClientConfig{
-		User: getUsername(),
+		User: getSshUsername(),
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(checkForPublicKeys()),
-			ssh.PasswordCallback(getPassword),
+			ssh.PasswordCallback(getSshPassword),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-
-		/*ssh.HostKeyCallback(func(host string, remote net.Addr, pubKey ssh.PublicKey) error {
-			kh := checkKnownHosts()
-			hErr := kh(host, remote, pubKey)
-			// Reference: https://blog.golang.org/go1.13-errors
-			// To understand what errors.As is.
-			if errors.As(hErr, &keyErr) && len(keyErr.Want) > 0 {
-				// Reference: https://www.godoc.org/golang.org/x/crypto/ssh/knownhosts#KeyError
-				// if keyErr.Want slice is empty then host is unknown, if keyErr.Want is not empty
-				// and if host is known then there is key mismatch the connection is then rejected.
-				log.Printf("WARNING: %v is not a key of %s, either a MiTM attack or %s has reconfigured the host pub key.", pubKey, host, host)
-				return keyErr
-			} else if errors.As(hErr, &keyErr) && len(keyErr.Want) == 0 {
-				// host key not found in known_hosts then give a warning and continue to connect.
-				log.Printf("WARNING: %s is not trusted, adding this key: %q to known_hosts file.", host, pubKey)
-				return addHostKey(host, remote, pubKey)
-			}
-			log.Printf("Pub key exists for %s.", host)
-			return nil
-		}),*/
 	}
 
-	conn, err := ssh.Dial("tcp", hostname+":"+port, config)
+	conn, err := ssh.Dial("tcp", regexMapSsh["Hostname"]+":"+port, config)
 
 	if err != nil {
 		return InputValue{}, err
@@ -112,9 +66,9 @@ func ReadSsh(sshPath string) (InputValue, error) {
 	}
 
 	result := InputValue{Kind: InputKindFile, Value: make(map[string][]byte)}
-	file, err := ioutil.ReadFile(path)
+	file, err := ioutil.ReadFile(regexMapSsh["Path"])
 	if err != nil {
-		fmt.Println(err)
+		return InputValue{}, err
 	}
 	result.Value[InputKindFile] = file
 
@@ -157,72 +111,31 @@ func getPubFile(homeEnv string) string {
 	return DefaultPubFile
 }
 
-func getUsername() string {
-	var userInput, user string
-	if env, ok := os.LookupEnv("FUTL_SSH_USER"); ok == true {
+func getSshUsername() string {
+	if regexMap["Username"] != "" {
+		return regexMap["Username"]
+	} else if env, ok := os.LookupEnv("FUTL_SSH_USER"); ok == true {
 		return env
-	} else {
-		if len(splitScp) == 1 {
-			fmt.Print("enter username: ")
-			fmt.Scanln(&userInput)
-			return userInput
-		}
-		user = splitUserAndPassword[0]
 	}
-	return user
+	fmt.Print("enter username: ")
+	reader := bufio.NewReader(os.Stdin)
+	username, err := reader.ReadString('\n')
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(username)
 }
 
-func getPassword() (string, error) {
-	var userInput, password string
+func getSshPassword() (string, error) {
 
-	if env, ok := os.LookupEnv("FUTL_SSH_PASSWORD"); ok == true {
+	if regexMapSsh["Password"] != "" {
+		return regexMapSsh["Password"], nil
+	} else if env, ok := os.LookupEnv("FUTL_SSH_PASSWORD"); ok == true {
 		return env, nil
-	} else {
-		if len(splitUserAndPassword) != 2 {
-
-			fmt.Print("enter password: ")
-			fmt.Scanln(&userInput)
-
-			return userInput, nil
-		}
-		password = splitUserAndPassword[1]
 	}
-	return password, nil
-}
-
-func addHostKey(host string, remote net.Addr, pubKey ssh.PublicKey) error {
-	// add host key if host is not found in known_hosts, error object is return, if nil then connection proceeds,
-	// if not nil then connection stops.
-	khFilePath := filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts")
-
-	f, fErr := os.OpenFile(khFilePath, os.O_APPEND|os.O_WRONLY, 0600)
-	if fErr != nil {
-		return fErr
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return "", nil
 	}
-	defer f.Close()
-
-	knownHosts := knownhosts.Normalize(remote.String())
-	_, fileErr := f.WriteString(knownhosts.Line([]string{knownHosts}, pubKey))
-	return fileErr
-}
-
-func createKnownHosts() {
-	f, fErr := os.OpenFile(filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts"), os.O_CREATE, 0600)
-	if fErr != nil {
-		log.Fatal(fErr)
-	}
-	f.Close()
-}
-
-func checkKnownHosts() ssh.HostKeyCallback {
-	createKnownHosts()
-	kh, e := knownhosts.New(filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts"))
-	errCallBack(e)
-	return kh
-}
-
-func errCallBack(e error) {
-	if e != nil {
-		log.Fatal(e)
-	}
+	return strings.TrimSpace(string(bytePassword)), nil
 }

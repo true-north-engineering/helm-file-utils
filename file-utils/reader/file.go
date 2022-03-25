@@ -7,6 +7,7 @@ import (
 
 const (
 	FilePrefix = "file"
+	NoPrefix   = ""
 )
 
 func ReadFile(filePath string) (InputValue, error) {

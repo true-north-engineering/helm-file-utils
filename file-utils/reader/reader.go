@@ -6,12 +6,13 @@ import (
 )
 
 var InputSchemesMap = map[string]bool{
-	dirPrefix:   true,
-	FilePrefix:  true,
-	HttpsPrefix: true,
-	HttpPrefix:  true,
-	SshPrefix:   true,
+	dirPrefix:      true,
+	FilePrefix:     true,
+	HttpsPrefix:    true,
+	HttpPrefix:     true,
+	SshPrefix:      true,
 	GitHttpsPrefix: true,
+	NoPrefix:       true,
 }
 
 const (
@@ -42,6 +43,8 @@ func DetermineReader(filePath string) (Factory, error) {
 		return ReadSsh, nil
 	case strings.HasPrefix(filePath, GitHttpsPrefix):
 		return ReadGitHttps, nil
+	case strings.HasPrefix(filePath, NoPrefix):
+		return ReadFile, nil
 	default:
 		return nil, errors.New("invalid reader scheme")
 	}

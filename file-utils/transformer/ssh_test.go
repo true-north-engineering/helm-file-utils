@@ -1,6 +1,5 @@
 package transformer
 
-/*
 import "testing"
 
 func TestSsh(t *testing.T) {
@@ -10,4 +9,3 @@ func TestSsh(t *testing.T) {
 	)
 	ExecuteTests(t, *testCase)*/
 }
-*/
