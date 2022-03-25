@@ -35,7 +35,8 @@ Reader to always execute first.
 
 **Reader**\
 Used to read the file from given destination. If none is provided, **file** is considered as default.\
-Available Readers: **file, dir
+Available Readers: **file, dir**
+
 **Transformer**\
 Transformers are used to do various transformations over the file.\
 Available Transformers: **base64enc, base64dec**
