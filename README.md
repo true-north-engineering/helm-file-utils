@@ -7,7 +7,8 @@ A Helm downloader plugin that supports different file manipulations, conversions
 
 ## Table of contents
 
-* [Installation](#install)
+* [Quick start](#quick-start)
+* [Installation](#installation)
 * [Usage and examples](#usage-and-examples)
 * [File transformations](#file-transformations)
   * [Readers](#readers)
@@ -17,11 +18,54 @@ A Helm downloader plugin that supports different file manipulations, conversions
     * [GitHttps](#git_https)
     * [Ssh](#ssh)
   * [Transformers](#transformers)
+    * [Base64enc](#base64enc)
+    * [Base64dec](#base64dec)
+    * [Yaml2json](#yaml2json)
+    * [Json2yaml](#json2yaml)
 * [Examples](#examples)
+* [Issues](#issues)
+* [Contribution guide](#contribution-guide)
 
 ## Quick start
 
+If you think you are experienced enough and you just want to start using this plugin as soon as possible - here are some quick tips to get you started.
+For more detailed explanation of plugin itself please refer to specific chapters below.
 
+Installation
+```bash
+helm plugin install https://github.com/true-north-engineering/helm-file-utils.git
+```
+
+Usage
+```bash
+helm install [NAME] [CHART] [flags] -f futl://path/to/values.yaml
+```
+
+Input example
+```yaml
+#values.yaml
+example_file:
+  - name: example_file
+    file: !futl base64dec+yaml2json+base64enc+file://files/example_file.yaml
+
+#example_file.yaml
+yaml_file:
+  - just_example
+  - just to demo it
+```    
+
+Output example
+```yaml
+example_file:
+  - name: example_file
+    file: |-
+        {
+          "yaml_file": [
+            "just_example",
+            "just to demo it"
+          ]
+        }
+```   
 
 ## Installation
 
@@ -31,7 +75,7 @@ After installing Helm, simply run the following:
 helm plugin install https://github.com/true-north-engineering/helm-file-utils.git
 ```
 
-For installing a specific release version (e.g. v0.1.0) please use following syntax:
+For installing a specific release version (e.g. 0.1.0) please use following syntax:
 
 ```bash
 helm plugin install https://github.com/true-north-engineering/helm-file-utils.git --version 0.1.0
@@ -44,7 +88,7 @@ version and architecture for specific OS. You can do so by providing adequate ve
 https://github.com/true-north-engineering/helm-file-utils/releases/download/v{version}/helm-file-utils_{version}_{os}_{architecture}.tar.gz
 ```
 
-Where _version_ represents one of the releases, OS one of the targeted operating systems - _darwin, linux, windows_, and 
+In the template above _version_ represents one of the releases, OS one of the targeted operating systems - _darwin, linux, windows_, and 
 architecture one of the supported architectures - _386, amd64, arm, arm64_. 
 
 ```bash
@@ -83,7 +127,7 @@ Order of transformation evaluation is from right to left, which forces Reader to
 ### Readers
 Used for reading the content from given destination. If none is provided, **file** is considered as default.\
 Available Readers are: **file, dir, https, git_https, ssh**\
-You can find detailed explanation of a single Reader followed by examples down below.
+You can find detailed explanation of every available Reader followed by examples down below.
 
 #### File
 
@@ -163,14 +207,39 @@ More examples of using ssh can be found in [ssh](tests/ssh/input/) test folder.
 ### Transformers
 Transformers are used to do various transformations over the file.\
 Available Transformers: **base64enc, base64dec, yaml2json, json2yaml**
+You can find detailed explanation of every available Transformer followed by examples down below.
 
-**base64enc**
+#### Base64enc
 
-**base64dec**
+Transformer that encodes given data into base64 standard.
 
-**yaml2json**
+```text
+!futl base64enc://../../tests/filetest/inputfile.txt
+```
 
-**json2yaml**
+#### Base64dec
+
+Transformer that decodes given base64 encoded data into string format.
+
+```text
+!futl base64dec://../../tests/filetest/inputfile.txt
+```
+
+#### Yaml2json
+
+Transformer that transforms given `.yaml` or `.yml` file into `.json` file.
+
+```text
+!futl yaml2json://../../tests/filetest/inputfile_yaml.yaml
+```
+
+#### Json2yaml
+
+Transformer that transforms given `.json` file into `.yaml` file.
+
+```text
+!futl json2yaml://../../tests/filetest/inputfile_json.json
+```
 
 ### Examples
 
@@ -214,12 +283,13 @@ sources:
 version: 0.1.0
 ```
 
-For more examples please visit [this](EXAMPLES.md) page or check [tests](tests/).
+For more examples please visit [this](EXAMPLES.md) page or check [tests](tests/) folder.
 
 
 ## Issues
 
-## 
 
 ## Contribution guide
+
+Contributions are more than welcome. If you would like to contribute to this plugin please see [these instructions](CONTRIBUTION.md) that will help you to develop the plugin.
 
