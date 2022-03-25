@@ -117,6 +117,10 @@ func getSshUsername() string {
 	} else if env, ok := os.LookupEnv("FUTL_SSH_USER"); ok == true {
 		return env
 	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return ""
+	}
 	fmt.Print("enter username: ")
 	reader := bufio.NewReader(os.Stdin)
 	username, err := reader.ReadString('\n')
@@ -133,6 +137,11 @@ func getSshPassword() (string, error) {
 	} else if env, ok := os.LookupEnv("FUTL_SSH_PASSWORD"); ok == true {
 		return env, nil
 	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return "", nil
+	}
+	fmt.Print("enter password: ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", nil

@@ -115,6 +115,11 @@ func getPassword() string {
 	} else if env, ok := os.LookupEnv("FUTL_GIT_PASSWORD"); ok == true {
 		return env
 	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return ""
+	}
+	fmt.Print("enter password: ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return ""
@@ -128,6 +133,10 @@ func getUsername() string {
 	} else if env, ok := os.LookupEnv("FUTL_GIT_USER"); ok == true {
 		return env
 	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return ""
+	}
 	fmt.Print("enter username: ")
 	reader := bufio.NewReader(os.Stdin)
 	username, err := reader.ReadString('\n')
@@ -135,4 +144,5 @@ func getUsername() string {
 		return ""
 	}
 	return strings.TrimSpace(username)
+
 }
