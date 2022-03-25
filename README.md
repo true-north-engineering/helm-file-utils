@@ -19,6 +19,10 @@ A Helm downloader plugin that supports different file manipulations, conversions
   * [Transformers](#transformers)
 * [Examples](#examples)
 
+## Quick start
+
+
+
 ## Installation
 
 After installing Helm, simply run the following:
@@ -33,9 +37,22 @@ For installing a specific release version (e.g. v0.1.0) please use following syn
 helm plugin install https://github.com/true-north-engineering/helm-file-utils.git --version 0.1.0
 ```
 
+Helm file utils also supports different architectures on different operating systems. Let's say you only want to download specific
+version and architecture for specific OS. You can do so by providing adequate version, OS and architecture to the template below. 
+
 ```bash
-https://github.com/true-north-engineering/helm-file-utils/releases/download/v0.1.3/helm-file-utils_0.1.3_linux_amd64.tar.gz
+https://github.com/true-north-engineering/helm-file-utils/releases/download/v{version}/helm-file-utils_{version}_{os}_{architecture}.tar.gz
 ```
+
+Where _version_ represents one of the releases, OS one of the targeted operating systems - _darwin, linux, windows_, and 
+architecture one of the supported architectures - _386, amd64, arm, arm64_. 
+
+```bash
+curl -sSL https://github.com/true-north-engineering/helm-file-utils/releases/download/v0.1.3/helm-file-utils_0.1.3_linux_amd64.tar.gz
+```
+
+To find more about specific releases please refer to [github releases](https://github.com/true-north-engineering/helm-file-utils/releases)
+
 ## Usage and examples
 
 Helm File Utils allows user to do multiple transformations over given file.
@@ -55,7 +72,7 @@ helm install [NAME] [CHART] [flags] -f futl://path/to/values.yaml
 
 In given `.yaml` or `.yml` file, multiple file transformations are possible.
 Transformations are classified in two categories - Transformers(**T**) and Readers(**R**). Template for chaining 
-file transformations is ``!futl T+R://path/to/transform`` where every transformation needs to consist of **exactly**
+file transformations is ``!futl T+R://path/to/transform`` where every transformation needs to consist of **at most**
 one Reader and **any number** of Transformers separated with **+** sign.
 Order of transformation evaluation is from right to left, which forces Reader to always execute first.
 
@@ -64,32 +81,85 @@ Order of transformation evaluation is from right to left, which forces Reader to
 
 
 ### Readers
-Used to read the file from given destination. If none is provided, **file** is considered as default.\
-Available Readers are: **file, dir, https, git_https, ssh**
+Used for reading the content from given destination. If none is provided, **file** is considered as default.\
+Available Readers are: **file, dir, https, git_https, ssh**\
+You can find detailed explanation of a single Reader followed by examples down below.
 
-#### **File**
+#### File
 
 Default reader protocol that reads content from a single file no matter the extension.
 
-#### **Dir**
+```text
+!futl file://../directory/inputfile.txt
+!futl ../directory/inputfile.txt
+```
+#### Dir
 
 Protocol that reads content of provided directory.
 
-#### **Http(s)**
+```text 
+!futl dir://../directory
+```
+
+#### Http(s)
 
 Protocol that reads content of provided https url. It acts similarly to file reader as input is response body from url that is provided.
 
-#### **Git_https**
+```text
+!futl https://path.to/read/input.txt
+```
 
-Protocol that allows user to read content from git. 
+#### Git_https
 
-``git_https://[username[:password]@]git_clone_url path/to/transform[#branch]``
+Protocol that allows user to read content via git. Content is read from repository that can be either private or public one.
+While public repositories require no authentication to acces the repository, private repositories require authentication 
+using username and password (**P**ersonal **A**ccess **T**oken).\
+Order for checking credentials is as it follows:
+1. Check if credentials are provided in URI using the ``[username[:password]@]`` syntax
+4. Look for environment variables named **FUTL_GIT_USER** or **FUTL_GIT_PASSWORD**
+5. Prompt user to enter credentials
 
-#### **Ssh**
+_**NOTE : It is assumed that environment variables are set by user himself otherwise program might not work as expected.**_
 
-Protocol that allows user to read content via ssh. 
+Git_https template followed by every field explanation can be found below. Optional fields are enlisted in [ ]. 
 
-`` ssh://[user[:password]@]hostname[:port]/path``
+```text
+!futl git_https://[username[:password]@]git_clone_url path/to/read[#branch]
+```
+
+_Credentials_ - optional field, allows user to authenticate when using the private repository as mentioned above\
+_Git_clone_url_ - clone url of repository, e.g. ``github.com/true-north-engineering/helm-file-utils.git``\
+_Path_ - path to file or directory\
+_Branch_ - optional field, can be used for fetching data from specific branch, if none is provided, default repository branch is used
+
+Example of simple usage:
+
+```text
+!futl git_https://true-north:pat@github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#develop
+```
+
+More examples of using git_https can be found in [git_https](tests/git_https/input/) test folder.
+
+#### Ssh
+
+Protocol that allows user to read content via ssh. To use the ssh it is required to have authentication.\
+Order for checking authentication is as it follows:
+1. Check for public keys stored in ``path/from/home/variable/.ssh/.pub`` where path is assumed to be environment variable **HOME**
+2. Check if credentials are provided in URI using the ``[username[:password]@]`` syntax 
+3. Look for environment variables named **FUTL_SSH_USER** or **FUTL_SSH_PASSWORD**
+4. Prompt user to enter credentials
+
+Ssh template followed by every field explanation can be found below. Optional fields are enlisted in [ ].
+
+`` ssh://[username[:password]@]hostname[:port]/path/to/file``
+y
+_Credentials_ - optional field, allows user to authenticate when connecting via ssh\
+_Hostname_ - host where ssh is hosted, can be IP or domain name\
+_Port_ - optional field, allows user to change port where ssh is hosted, if not provided, default is 22\
+_Path_ - path to file or directory\
+
+More examples of using ssh can be found in [ssh](tests/ssh/input/) test folder.
+
 ### Transformers
 Transformers are used to do various transformations over the file.\
 Available Transformers: **base64enc, base64dec, yaml2json, json2yaml**
