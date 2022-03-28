@@ -1,0 +1,4 @@
+tests:
+  name: ssh
+  test:
+    file: !futl base64enc+ssh://fileutils@localhost:/ssh_test/inputfile.txt

@@ -1,0 +1,10 @@
+tests:
+    name: base64enc
+    test:
+        dir:
+            inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
+            inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
+        file: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
+        multiple:
+            inputfile1.txt: U1d4U2IyRllUV2RoV0UxbllWYzFkMlJZVVdkYWJXeHpXbE5DZFdSWE1XbGFXRWxuVFZNMGFRPT0=
+            inputfile2.txt: U1d4U2IyRllUV2RoV0UxbllWYzFkMlJZVVdkYWJXeHpXbE5DZFdSWE1XbGFXRWxuVFdrMGFRPT0=

@@ -1,4 +1,0 @@
-ccc:
-  ddd: eee
-  rrr:
-    ajl: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/dirtest/file#main

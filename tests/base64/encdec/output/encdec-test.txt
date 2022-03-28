@@ -1,4 +1,0 @@
-ccc:
-    ddd: eee
-    rrr:
-        ajl: '"This is input file number 3."'

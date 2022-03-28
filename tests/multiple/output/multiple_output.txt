@@ -1,0 +1,37 @@
+tests:
+    name: multiple
+    test_file:
+        base64enc_base64dec: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
+        base64_http: |
+            This is just an ordinary static file for https test
+        base64_yamljson: |-
+            {
+              "json": [
+                "simpletest",
+                "to see if this works"
+              ]
+            }
+        git_https_json2yaml: anNvbjoKICAgIC0gc2ltcGxldGVzdAogICAgLSB0byBzZWUgaWYgdGhpcyB3b3Jrcwo=
+        git_https_yaml2json: |-
+            {
+              "json": [
+                "simpletest",
+                "to see if this works"
+              ]
+            }
+        json2yaml_yaml2json:
+            json_input1.json: |-
+                {
+                  "json": [
+                    "json test 1",
+                    "to see if this works"
+                  ]
+                }
+            json_input2.json: |-
+                {
+                  "json": [
+                    "json test 2",
+                    "this should also work"
+                  ]
+                }
+        yaml2json: ewogICJqc29uIjogWwogICAgInNpbXBsZXRlc3QiLAogICAgInRvIHNlZSBpZiB0aGlzIHdvcmtzIgogIF0KfQ==

@@ -99,6 +99,7 @@ func checkForPublicKeys() ssh.Signer {
 	return signer
 }
 
+// getPubFile Reads
 func getPubFile(homeEnv string) string {
 	cmd, _ := exec.Command("ls", homeEnv+"/.ssh/", "-A1").Output()
 	lines := strings.Split(string(cmd), "\n")
