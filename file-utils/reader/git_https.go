@@ -51,8 +51,8 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	pathToClone, _ := url.QueryUnescape("https://" + regexMap["PathToClone"])
 
 	authMethod := &http.BasicAuth{
-		Username: getUsername(),
-		Password: getPassword(),
+		Username: getGitUsername(),
+		Password: getGitPassword(),
 	}
 
 	repository, err := git.PlainClone(pathToLocalTmpDir, false, &git.CloneOptions{
@@ -109,7 +109,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 }
 
 //getPassword Returns provided password if exists, else prompts user for password
-func getPassword() string {
+func getGitPassword() string {
 	if regexMap["Password"] != "" {
 		return regexMap["Password"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_PASSWORD"); ok == true {
@@ -122,7 +122,7 @@ func getPassword() string {
 	return strings.TrimSpace(string(bytePassword))
 }
 
-func getUsername() string {
+func getGitUsername() string {
 	if regexMap["Username"] != "" {
 		return regexMap["Username"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_USER"); ok == true {

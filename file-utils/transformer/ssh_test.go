@@ -8,6 +8,6 @@ func TestSsh(t *testing.T) {
 		"futl://../../tests/ssh/input/values.yaml",
 		"../../tests/ssh/output/ssh_test.txt", "", false,
 	)
-	ExecuteTests(t, *testCase)*/
+	ExecuteTests(t, *testCase)
 }
 */
