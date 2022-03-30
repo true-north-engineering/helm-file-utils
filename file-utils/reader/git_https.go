@@ -21,6 +21,7 @@ const (
 
 var regexMap = make(map[string]string)
 
+// ReadGitHttps Reader protocol that allows user to read content via git.
 func ReadGitHttps(gitPath string) (InputValue, error) {
 
 	regex := regexp.MustCompile("(((?P<Username>[^:]+)(:(?P<Password>[^:]+))?)@)?((?P<PathToClone>[[:ascii:]]*.[[:ascii:]]*)[[:blank:]](?P<PathToGet>[[:ascii:]]*))")
@@ -108,7 +109,11 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 
 }
 
-//getPassword Returns provided password if exists, else prompts user for password
+// getPassword Returns provided password if exists
+// Order for fetching password is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_GIT_PASSWORD
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter password
 func getPassword() string {
 	if regexMap["Password"] != "" {
 		return regexMap["Password"]
@@ -127,6 +132,11 @@ func getPassword() string {
 	return strings.TrimSpace(string(bytePassword))
 }
 
+// getUsername Returns provided username if exists
+// Order for fetching username is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_GIT_USER
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter username
 func getUsername() string {
 	if regexMap["Username"] != "" {
 		return regexMap["Username"]

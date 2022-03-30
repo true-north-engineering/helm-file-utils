@@ -22,6 +22,7 @@ const (
 
 var regexMapSsh = make(map[string]string)
 
+// ReadSsh Reader protocol that allows user to read content via ssh.
 func ReadSsh(sshPath string) (InputValue, error) {
 
 	regex := regexp.MustCompile("(((?P<Username>[^:]+)(:(?P<Password>[^:]+))?)@)?(?P<Hostname>[[:ascii:]]*):(?P<Port>\\d*)\\/((?P<Path>[[:ascii:]]*))")
@@ -112,6 +113,11 @@ func getPubFile(homeEnv string) string {
 	return DefaultPubFile
 }
 
+// getSshUsername Returns provided username if exists
+// Order for fetching username is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_SSH_USER
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter username
 func getSshUsername() string {
 	if regexMap["Username"] != "" {
 		return regexMap["Username"]
@@ -131,6 +137,11 @@ func getSshUsername() string {
 	return strings.TrimSpace(username)
 }
 
+// getSshPassword Returns provided password if exists
+// Order for fetching password is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_SSH_PASSWORD
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter password
 func getSshPassword() (string, error) {
 
 	if regexMapSsh["Password"] != "" {
