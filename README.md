@@ -95,7 +95,7 @@ architecture one of the supported architectures - _386, amd64, arm, arm64_.
 curl -sSL https://github.com/true-north-engineering/helm-file-utils/releases/download/v0.1.3/helm-file-utils_0.1.3_linux_amd64.tar.gz
 ```
 
-To find more about specific releases please refer to [github releases](https://github.com/true-north-engineering/helm-file-utils/releases)
+To find more about specific releases please refer to [github releases](https://github.com/true-north-engineering/helm-file-utils/releases).
 
 ## Usage and examples
 
@@ -160,8 +160,8 @@ While public repositories require no authentication to acces the repository, pri
 using username and password (**P**ersonal **A**ccess **T**oken).\
 Order for checking credentials is as it follows:
 1. Check if credentials are provided in URI using the ``[username[:password]@]`` syntax
-4. Look for environment variables named **FUTL_GIT_USER** or **FUTL_GIT_PASSWORD**
-5. Prompt user to enter credentials
+2. Look for environment variables named **FUTL_GIT_USER** or **FUTL_GIT_PASSWORD**
+3. Look for environment variable named **FUTL_CI** - if variable exists prompt user to enter credentials
 
 _**NOTE : It is assumed that environment variables are set by user himself otherwise program might not work as expected.**_
 
@@ -191,7 +191,8 @@ Order for checking authentication is as it follows:
 1. Check for public keys stored in ``path/from/home/variable/.ssh/.pub`` where path is assumed to be environment variable **HOME**
 2. Check if credentials are provided in URI using the ``[username[:password]@]`` syntax 
 3. Look for environment variables named **FUTL_SSH_USER** or **FUTL_SSH_PASSWORD**
-4. Prompt user to enter credentials
+4. Look for environment variable named **FUTL_CI** - if variable exists prompt user to enter credentials
+
 
 Ssh template followed by every field explanation can be found below. Optional fields are enlisted in [ ].
 
@@ -283,7 +284,7 @@ sources:
 version: 0.1.0
 ```
 
-For more examples please visit [this](EXAMPLES.md) page or check [tests](tests/) folder.
+For more examples please visit [this](EXAMPLES.md) page or ceven better - check [tests](tests/) folder.
 
 
 ## Issues
