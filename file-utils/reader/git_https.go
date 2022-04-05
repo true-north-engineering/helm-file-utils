@@ -11,6 +11,7 @@ import (
 	"github.com/go-git/go-git/v5/storage/memory"
 	"golang.org/x/term"
 	"io/ioutil"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -62,11 +63,11 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	headReference, err := repository.Head()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_ = strings.TrimPrefix(string(headReference.Name()), "refs/heads/")
 
@@ -84,7 +85,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		})
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 
