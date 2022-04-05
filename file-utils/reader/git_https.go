@@ -3,13 +3,17 @@ package reader
 import (
 	"bufio"
 	"fmt"
+	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"golang.org/x/term"
+	"io/ioutil"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"syscall"
@@ -28,7 +32,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	result := regex.FindStringSubmatch(strings.TrimPrefix(gitPath, GitHttpsPrefix+"://"))
 
 	for i, name := range regex.SubexpNames() {
-		if i != 0 && name != "" {
+		if i != 0 && i <= len(result) && name != "" {
 			regexMap[name] = result[i]
 		}
 	}
@@ -41,11 +45,6 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		regexMap["Branch"] = ""
 	}
 
-	//path where files are temporarily store
-	//e.g. /tmp/helm-file-utils
-	pathToLocalTmpDir := "/tmp/" + regexMap["PathToClone"][strings.Index(regexMap["PathToClone"], "/")+1:strings.LastIndex(regexMap["PathToClone"], "/")+1]
-	defer os.RemoveAll(pathToLocalTmpDir)
-
 	//path that is cloned via https
 	//e.g. https://github.com/true-north-engineering/helm-file-utils
 	pathToClone, _ := url.QueryUnescape("https://" + regexMap["PathToClone"])
@@ -55,7 +54,8 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		Password: getGitPassword(),
 	}
 
-	repository, err := git.PlainClone(pathToLocalTmpDir, false, &git.CloneOptions{
+	fs := memfs.New()
+	repository, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:      pathToClone,
 		Progress: os.Stdout,
 		Auth:     authMethod,
@@ -89,23 +89,50 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	}
 
 	//parse absolute path properly
-	absolutePath := pathToLocalTmpDir + regexMap["PathToGet"]
-
-	fileInfo, err := os.Stat(absolutePath)
+	pathToGet := regexMap["PathToGet"]
+	info, err := fs.Stat(pathToGet)
 
 	if err != nil {
 		return InputValue{}, err
 	}
 
-	//once task is finished, delete temporarily created directory
-
-	//if given path is directory, delegate it to reader dir
-	if fileInfo.IsDir() {
-		return ReadDir(absolutePath)
+	// read flat
+	if info.IsDir() {
+		dir, err := fs.ReadDir(pathToGet)
+		if err != nil {
+			return InputValue{}, err
+		}
+		inputValue := InputValue{Kind: InputKindDir, Value: make(map[string][]byte)}
+		for _, fileInfo := range dir {
+			if fileInfo.IsDir() {
+				continue
+			}
+			filePath := filepath.Join(pathToGet, fileInfo.Name())
+			file, err := fs.Open(filePath)
+			if err != nil {
+				return InputValue{}, err
+			}
+			data, err := ioutil.ReadAll(file)
+			if err != nil {
+				return InputValue{}, err
+			}
+			inputValue.Value[filePath] = data
+		}
+		return inputValue, nil
 	}
 
-	return ReadFile(absolutePath)
-
+	// read file
+	file, err := fs.Open(pathToGet)
+	if err != nil {
+		return InputValue{}, err
+	}
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return InputValue{}, err
+	}
+	inputValue := InputValue{Kind: InputKindFile, Value: make(map[string][]byte)}
+	inputValue.Value[InputKindFile] = data
+	return inputValue, nil
 }
 
 //getPassword Returns provided password if exists, else prompts user for password
@@ -115,6 +142,7 @@ func getGitPassword() string {
 	} else if env, ok := os.LookupEnv("FUTL_GIT_PASSWORD"); ok == true {
 		return env
 	}
+	fmt.Print("enter password: ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return ""
