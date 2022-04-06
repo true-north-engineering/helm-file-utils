@@ -2,11 +2,11 @@ tests:
     name: git_https
     test_dir:
         dir1:
-            inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
-            inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
+            tests/dirtest/file/inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
+            tests/dirtest/file/inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
         dir2:
-            inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
-            inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
+            tests/dirtest/file/inputfile1.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMS4i
+            tests/dirtest/file/inputfile2.txt: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMi4i
     test_file:
         file1: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
         file2: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i

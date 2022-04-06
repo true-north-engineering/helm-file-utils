@@ -3,13 +3,18 @@ package reader
 import (
 	"bufio"
 	"fmt"
+	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"golang.org/x/term"
+	"io/ioutil"
+	"log"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"syscall"
@@ -21,7 +26,6 @@ const (
 
 var regexMap = make(map[string]string)
 
-// ReadGitHttps Reader protocol that allows user to read content via git.
 func ReadGitHttps(gitPath string) (InputValue, error) {
 
 	regex := regexp.MustCompile("(((?P<Username>[^:]+)(:(?P<Password>[^:]+))?)@)?((?P<PathToClone>[[:ascii:]]*.[[:ascii:]]*)[[:blank:]](?P<PathToGet>[[:ascii:]]*))")
@@ -29,7 +33,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	result := regex.FindStringSubmatch(strings.TrimPrefix(gitPath, GitHttpsPrefix+"://"))
 
 	for i, name := range regex.SubexpNames() {
-		if i != 0 && name != "" {
+		if i != 0 && i <= len(result) && name != "" {
 			regexMap[name] = result[i]
 		}
 	}
@@ -52,22 +56,23 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	pathToClone, _ := url.QueryUnescape("https://" + regexMap["PathToClone"])
 
 	authMethod := &http.BasicAuth{
-		Username: getUsername(),
-		Password: getPassword(),
+		Username: getGitUsername(),
+		Password: getGitPassword(),
 	}
 
-	repository, err := git.PlainClone(pathToLocalTmpDir, false, &git.CloneOptions{
+	fs := memfs.New()
+	repository, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
 		URL:      pathToClone,
 		Progress: os.Stdout,
 		Auth:     authMethod,
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	headReference, err := repository.Head()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_ = strings.TrimPrefix(string(headReference.Name()), "refs/heads/")
 
@@ -85,28 +90,55 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		})
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 
 	//parse absolute path properly
-	absolutePath := pathToLocalTmpDir + regexMap["PathToGet"]
-
-	fileInfo, err := os.Stat(absolutePath)
+	pathToGet := regexMap["PathToGet"]
+	info, err := fs.Stat(pathToGet)
 
 	if err != nil {
 		return InputValue{}, err
 	}
 
-	//once task is finished, delete temporarily created directory
-
-	//if given path is directory, delegate it to reader dir
-	if fileInfo.IsDir() {
-		return ReadDir(absolutePath)
+	// read flat
+	if info.IsDir() {
+		dir, err := fs.ReadDir(pathToGet)
+		if err != nil {
+			return InputValue{}, err
+		}
+		inputValue := InputValue{Kind: InputKindDir, Value: make(map[string][]byte)}
+		for _, fileInfo := range dir {
+			if fileInfo.IsDir() {
+				continue
+			}
+			filePath := filepath.Join(pathToGet, fileInfo.Name())
+			file, err := fs.Open(filePath)
+			if err != nil {
+				return InputValue{}, err
+			}
+			data, err := ioutil.ReadAll(file)
+			if err != nil {
+				return InputValue{}, err
+			}
+			inputValue.Value[filePath] = data
+		}
+		return inputValue, nil
 	}
 
-	return ReadFile(absolutePath)
-
+	// read file
+	file, err := fs.Open(pathToGet)
+	if err != nil {
+		return InputValue{}, err
+	}
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return InputValue{}, err
+	}
+	inputValue := InputValue{Kind: InputKindFile, Value: make(map[string][]byte)}
+	inputValue.Value[InputKindFile] = data
+	return inputValue, nil
 }
 
 // getPassword Returns provided password if exists
@@ -114,7 +146,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 //		1. Check if credentials are provided in URI using the [username[:password]@] syntax
 //		2. Look for environment variable named FUTL_GIT_PASSWORD
 //		3. Look for environment variable named FUTL_CI, if exists prompt user to enter password
-func getPassword() string {
+func getGitPassword() string {
 	if regexMap["Password"] != "" {
 		return regexMap["Password"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_PASSWORD"); ok == true {
@@ -137,7 +169,7 @@ func getPassword() string {
 //		1. Check if credentials are provided in URI using the [username[:password]@] syntax
 //		2. Look for environment variable named FUTL_GIT_USER
 //		3. Look for environment variable named FUTL_CI, if exists prompt user to enter username
-func getUsername() string {
+func getGitUsername() string {
 	if regexMap["Username"] != "" {
 		return regexMap["Username"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_USER"); ok == true {
@@ -154,5 +186,4 @@ func getUsername() string {
 		return ""
 	}
 	return strings.TrimSpace(username)
-
 }
