@@ -12,6 +12,7 @@ var schemesMap = map[string]bool{
 	Json2YamlPrefix: true,
 	Yaml2JsonPrefix: true,
 	FUTLPrefix:      true,
+	XsltPrefix:      true,
 }
 
 type Factory func(inputValue reader.InputValue) (reader.InputValue, error)
@@ -65,6 +66,9 @@ func DetermineTransformer(scheme string) (Factory, error) {
 		return Yaml2JsonTransform, nil
 	case scheme == FUTLPrefix:
 		return FUTLTransform, nil
+	case scheme == XsltPrefix:
+		return XsltTransform, nil
 	}
+
 	return nil, errors.New("transform scheme not found")
 }

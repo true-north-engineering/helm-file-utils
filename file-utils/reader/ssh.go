@@ -69,10 +69,10 @@ func ReadSsh(sshPath string) (InputValue, error) {
 	// var keyErr *knownhosts.KeyError
 
 	config := &ssh.ClientConfig{
-		User: getUsername(),
+		User: getSshUsername(),
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(checkForPublicKeys()),
-			ssh.PasswordCallback(getPassword),
+			ssh.PasswordCallback(getSshPassword),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 
@@ -157,7 +157,7 @@ func getPubFile(homeEnv string) string {
 	return DefaultPubFile
 }
 
-func getUsername() string {
+func getSshUsername() string {
 	var userInput, user string
 	if env, ok := os.LookupEnv("FUTL_SSH_USER"); ok == true {
 		return env
@@ -172,7 +172,7 @@ func getUsername() string {
 	return user
 }
 
-func getPassword() (string, error) {
+func getSshPassword() (string, error) {
 	var userInput, password string
 
 	if env, ok := os.LookupEnv("FUTL_SSH_PASSWORD"); ok == true {

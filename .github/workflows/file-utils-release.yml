@@ -41,3 +41,5 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FUTL_GIT_PASSWORD: ${{ secrets.FUTL_GIT_PASSWORD }}
+          FUTL_GIT_USER: ${{ secrets.FUTL_GIT_USER }}

@@ -1,0 +1,7 @@
+ccc:
+    ddd: eee
+    rrr:
+        aaa: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
+        ajl: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
+        bbb: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
+        eee: IlRoaXMgaXMgaW5wdXQgZmlsZSBudW1iZXIgMy4i
