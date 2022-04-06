@@ -2,7 +2,7 @@ tests:
   name: git_https
   test_file:
     file1: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#main
-    file2: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#git_https
+    file2: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#test
   test_dir:
     dir1: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/dirtest/file#main
-    dir2: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/dirtest/file#git_https
+    dir2: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/dirtest/file#test
