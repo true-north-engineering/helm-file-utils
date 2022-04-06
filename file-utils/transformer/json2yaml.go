@@ -11,6 +11,7 @@ const (
 	Json2YamlPrefix = "json2yaml"
 )
 
+// Json2YamlTransform Transformer that transforms given .json file into .yaml file.
 func Json2YamlTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}

@@ -1,0 +1,10 @@
+tests:
+  name: multiple
+  test_file:
+    base64enc_base64dec: !futl base64dec+base64enc://../../tests/filetest/inputfile4.txt
+    json2yaml_yaml2json: !futl yaml2json+json2yaml+dir://../../tests/dirtest/json
+    base64_yamljson: !futl yaml2json+base64dec+base64enc+json2yaml://../../tests/filetest/inputfile_json.json
+    base64_http: !futl base64dec+base64enc+http://raw.githubusercontent.com/true-north-engineering/helm-file-utils/main/tests/static_file.txt
+    yaml2json: !futl base64enc+yaml2json://../../tests/filetest/inputfile_yaml.yaml
+    git_https_json2yaml: !futl base64enc+json2yaml+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile_json.json#main
+    git_https_yaml2json: !futl base64dec+base64enc+yaml2json+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile_yaml.yaml

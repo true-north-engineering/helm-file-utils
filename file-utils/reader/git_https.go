@@ -46,6 +46,11 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		regexMap["Branch"] = ""
 	}
 
+	//path where files are temporarily store
+	//e.g. /tmp/helm-file-utils
+	pathToLocalTmpDir := "/tmp/" + regexMap["PathToClone"][strings.Index(regexMap["PathToClone"], "/")+1:strings.LastIndex(regexMap["PathToClone"], "/")+1]
+	defer os.RemoveAll(pathToLocalTmpDir)
+
 	//path that is cloned via https
 	//e.g. https://github.com/true-north-engineering/helm-file-utils
 	pathToClone, _ := url.QueryUnescape("https://" + regexMap["PathToClone"])
@@ -136,12 +141,20 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	return inputValue, nil
 }
 
-//getPassword Returns provided password if exists, else prompts user for password
+// getPassword Returns provided password if exists
+// Order for fetching password is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_GIT_PASSWORD
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter password
 func getGitPassword() string {
 	if regexMap["Password"] != "" {
 		return regexMap["Password"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_PASSWORD"); ok == true {
 		return env
+	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return ""
 	}
 	fmt.Print("enter password: ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
@@ -151,11 +164,20 @@ func getGitPassword() string {
 	return strings.TrimSpace(string(bytePassword))
 }
 
+// getUsername Returns provided username if exists
+// Order for fetching username is as it follows:
+//		1. Check if credentials are provided in URI using the [username[:password]@] syntax
+//		2. Look for environment variable named FUTL_GIT_USER
+//		3. Look for environment variable named FUTL_CI, if exists prompt user to enter username
 func getGitUsername() string {
 	if regexMap["Username"] != "" {
 		return regexMap["Username"]
 	} else if env, ok := os.LookupEnv("FUTL_GIT_USER"); ok == true {
 		return env
+	}
+	_, ok := os.LookupEnv("FUTL_CI")
+	if !ok {
+		return ""
 	}
 	fmt.Print("enter username: ")
 	reader := bufio.NewReader(os.Stdin)

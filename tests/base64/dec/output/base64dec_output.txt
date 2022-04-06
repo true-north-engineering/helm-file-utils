@@ -1,0 +1,7 @@
+tests:
+    name: base64enc
+    test:
+        dir:
+            inputfile5.txt: Helm file utils
+            inputfile6.txt: This is the best plugin
+        file: '"This is input file number 3."'

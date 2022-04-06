@@ -9,6 +9,7 @@ const (
 	B64EncPrefix = "base64enc"
 )
 
+// B64ENCTransform Transformer that decodes given base64 encoded data into string format.
 func B64ENCTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
 	if inputValue.Kind == reader.InputKindFile {

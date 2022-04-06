@@ -1,7 +1,0 @@
-ccc:
-  ddd: eee
-  rrr:
-    ajl: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#main
-    aaa: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#git_https
-    bbb: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#main
-    eee: !futl base64enc+git_https://github.com/true-north-engineering/helm-file-utils.git tests/filetest/inputfile3.txt#git_https

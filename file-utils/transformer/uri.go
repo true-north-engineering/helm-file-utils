@@ -26,8 +26,13 @@ func ParseURI(uri string) (URI, error) {
 	result := URI{}
 
 	uriFragments := strings.Split(uri, "://")
-	if len(uriFragments) != 2 {
+	if len(uriFragments) > 2 || len(uriFragments) < 1 {
 		return result, errors.New("invalid format URL")
+	}
+
+	if len(uriFragments) == 1 {
+		result.InputURL = reader.FilePrefix + "://" + uriFragments[0]
+		return result, nil
 	}
 
 	schemes := strings.Split(uriFragments[0], "+")

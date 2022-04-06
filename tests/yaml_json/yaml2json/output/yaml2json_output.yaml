@@ -1,0 +1,10 @@
+tests:
+    name: yaml2json
+    test:
+        file: |-
+            {
+              "json": [
+                "simpletest",
+                "to see if this works"
+              ]
+            }

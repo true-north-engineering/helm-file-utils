@@ -1,0 +1,7 @@
+tests:
+    name: futl
+    test:
+        dir:
+            inputfile1.txt: '"This is input file number 1."'
+            inputfile2.txt: '"This is input file number 2."'
+        file: '"This is input file number 3."'
