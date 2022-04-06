@@ -9,6 +9,7 @@ const (
 	B64DecPrefix = "base64dec"
 )
 
+// B64DECTransform Transformer that encodes given data into base64 standard.
 func B64DECTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
 

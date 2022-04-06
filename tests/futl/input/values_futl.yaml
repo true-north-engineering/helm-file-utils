@@ -1,0 +1,5 @@
+tests:
+  name: futl
+  test:
+    file: !futl ../../tests/filetest/inputfile3.txt
+    dir: !futl dir://../../tests/dirtest/file

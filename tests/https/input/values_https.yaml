@@ -1,0 +1,5 @@
+tests:
+  name: https
+  test:
+    file1: !futl https://raw.githubusercontent.com/true-north-engineering/helm-file-utils/main/tests/static_file.txt
+    file2: !futl base64enc+https://raw.githubusercontent.com/true-north-engineering/helm-file-utils/main/tests/static_file.txt

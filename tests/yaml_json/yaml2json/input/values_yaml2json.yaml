@@ -1,0 +1,4 @@
+tests:
+  name: yaml2json
+  test:
+    file: !futl yaml2json://../../tests/filetest/inputfile_yaml.yaml

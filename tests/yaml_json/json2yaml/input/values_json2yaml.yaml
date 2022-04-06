@@ -1,0 +1,4 @@
+tests:
+  name: json2yaml
+  test:
+    file: !futl json2yaml://../../tests/filetest/inputfile_json.json

@@ -10,6 +10,8 @@ const (
 	HttpPrefix  = "http"
 )
 
+// ReadHttps Reader protocol that reads content of provided https url.
+// It acts similarly to ReadFile since input is response body from url that is provided.
 func ReadHttps(httpPath string) (InputValue, error) {
 	resp, err := http.Get(httpPath)
 	defer resp.Body.Close()

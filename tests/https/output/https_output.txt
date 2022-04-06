@@ -1,0 +1,6 @@
+tests:
+    name: https
+    test:
+        file1: |
+            This is just an ordinary static file for https test
+        file2: VGhpcyBpcyBqdXN0IGFuIG9yZGluYXJ5IHN0YXRpYyBmaWxlIGZvciBodHRwcyB0ZXN0Cg==

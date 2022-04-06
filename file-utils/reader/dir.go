@@ -11,6 +11,7 @@ const (
 	dirPrefix = "dir"
 )
 
+// ReadDir Reader protocol that reads content of provided directory.
 func ReadDir(dir string) (InputValue, error) {
 	path := strings.TrimPrefix(dir, dirPrefix+"://")
 	file, err := os.Open(path)

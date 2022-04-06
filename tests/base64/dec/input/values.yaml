@@ -1,4 +1,0 @@
-ccc:
-  ddd: eee
-  rrr:
-    ajl: !futl base64dec://../../tests/filetest/inputfile4.txt

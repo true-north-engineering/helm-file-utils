@@ -1,0 +1,7 @@
+tests:
+  name: base64enc
+  test:
+    file: !futl base64dec://../../tests/filetest/inputfile4.txt
+    dir: !futl base64dec+dir://../../tests/dirtest/other
+
+

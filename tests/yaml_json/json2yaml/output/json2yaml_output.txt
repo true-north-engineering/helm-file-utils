@@ -1,0 +1,7 @@
+tests:
+    name: json2yaml
+    test:
+        file: |
+            json:
+                - simpletest
+                - to see if this works
