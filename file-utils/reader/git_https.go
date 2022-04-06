@@ -11,7 +11,6 @@ import (
 	"github.com/go-git/go-git/v5/storage/memory"
 	"golang.org/x/term"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -46,11 +45,6 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		regexMap["Branch"] = ""
 	}
 
-	//path where files are temporarily store
-	//e.g. /tmp/helm-file-utils
-	pathToLocalTmpDir := "/tmp/" + regexMap["PathToClone"][strings.Index(regexMap["PathToClone"], "/")+1:strings.LastIndex(regexMap["PathToClone"], "/")+1]
-	defer os.RemoveAll(pathToLocalTmpDir)
-
 	//path that is cloned via https
 	//e.g. https://github.com/true-north-engineering/helm-file-utils
 	pathToClone, _ := url.QueryUnescape("https://" + regexMap["PathToClone"])
@@ -68,11 +62,12 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 	})
 
 	if err != nil {
-		log.Println(err)
+		return InputValue{}, err
 	}
+
 	headReference, err := repository.Head()
 	if err != nil {
-		log.Println(err)
+		return InputValue{}, err
 	}
 	_ = strings.TrimPrefix(string(headReference.Name()), "refs/heads/")
 
@@ -90,7 +85,7 @@ func ReadGitHttps(gitPath string) (InputValue, error) {
 		})
 
 		if err != nil {
-			log.Println(err)
+			return InputValue{}, err
 		}
 	}
 

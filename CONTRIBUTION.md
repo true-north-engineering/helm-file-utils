@@ -41,4 +41,3 @@ e.g. for issue -  #100 Add yaml2json transformer :
 ```
 
 Every commit message should describe what was changed, under which context and, if applicable, the GitHub issue it relates to.
-Please also try to keep commits as 

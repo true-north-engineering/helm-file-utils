@@ -3,6 +3,7 @@
 A Helm downloader plugin that supports different file manipulations, conversions, encoders and decoders.
 
 ![Plugin Tests](https://github.com/true-north-engineering/helm-file-utils/actions/workflows/file-utils-release.yml/badge.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
 ## Table of contents
@@ -284,7 +285,7 @@ sources:
 version: 0.1.0
 ```
 
-For more examples please visit [this](EXAMPLES.md) page or ceven better - check [tests](tests/) folder.
+For more examples please visit [this](EXAMPLES.md) page or even better - check [tests](tests/) folder.
 
 
 ## Issues

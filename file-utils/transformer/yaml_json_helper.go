@@ -31,9 +31,7 @@ func cleanYaml(yamlData map[interface{}]interface{}) map[string]interface{} {
 					cleanInnerMap := cleanYaml(itemAsserted)
 					cleanYamlMapping[assertedKey] = cleanInnerMap
 				}
-
 			}
-
 		}
 	}
 
