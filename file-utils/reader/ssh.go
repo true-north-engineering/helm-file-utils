@@ -156,7 +156,7 @@ func getSshPassword() (string, error) {
 	fmt.Print("enter password: ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return strings.TrimSpace(string(bytePassword)), nil
 }

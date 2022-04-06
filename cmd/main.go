@@ -23,9 +23,10 @@ func main() {
 	result, err := transformer.ExecuteTransformations(os.Args[4])
 
 	if err != nil {
-		os.Stderr.Write([]byte("Krafna"))
+		os.Stderr.Write([]byte(err.Error()))
 		os.Exit(1)
 	}
+
 	if result.Kind != reader.InputKindFile {
 		log.Fatal("error dir scheme available only inside futl parsed yaml file")
 	}

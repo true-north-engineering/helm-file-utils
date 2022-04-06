@@ -1,7 +1,7 @@
 package transformer
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 	reader "github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"strings"
 )

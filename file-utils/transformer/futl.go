@@ -13,7 +13,7 @@ const (
 
 func FUTLTransform(inputValue reader.InputValue) (reader.InputValue, error) {
 	if inputValue.Kind != reader.InputKindFile {
-		return reader.InputValue{}, errors.Errorf("wrong input type into futl transformer")
+		return reader.InputValue{}, errors.New("wrong input type into futl transformer")
 	}
 	file := inputValue.Value[reader.InputKindFile]
 

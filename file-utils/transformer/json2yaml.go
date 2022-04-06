@@ -2,7 +2,6 @@ package transformer
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"gopkg.in/yaml.v3"
 )
@@ -28,8 +27,7 @@ func Json2YamlTransform(inputValue reader.InputValue) (reader.InputValue, error)
 		for fileName, fileValue := range inputFiles {
 			yamlfile, err := JSONToYAMLFull(fileValue)
 			if err != nil {
-				fmt.Println(err)
-				continue
+				return reader.InputValue{}, err
 			}
 			result.Value[fileName] = yamlfile
 		}
@@ -42,7 +40,7 @@ func ConvertJson2Yaml(jsonData map[string]interface{}) ([]byte, error) {
 
 	output, err := yaml.Marshal(jsonData)
 	if err != nil {
-		return nil, fmt.Errorf("error marshaling YAML: %s", err.Error())
+		return nil, err
 	}
 
 	return output, nil

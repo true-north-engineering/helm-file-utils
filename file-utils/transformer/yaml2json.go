@@ -45,7 +45,7 @@ func ConvertYAMLToJSON(yamlData map[interface{}]interface{}) ([]byte, error) {
 
 	output, err := json.MarshalIndent(cleanedYaml, "", "  ")
 	if err != nil {
-		return nil, fmt.Errorf("error converting yaml to json: %s", err.Error())
+		return nil, err
 	}
 
 	return output, nil

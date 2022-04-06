@@ -2,14 +2,13 @@ package transformer
 
 import (
 	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
-	"log"
 )
 
 func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 
 	fileURI, err := ParseURI(fileURIString)
 	if err != nil {
-		log.Fatal(err)
+		return reader.InputValue{}, err
 	}
 
 	readByProtocol, err := reader.DetermineReader(fileURI.InputURL)
@@ -21,7 +20,7 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 	inputValue, err := readByProtocol(fileURI.InputURL)
 
 	if err != nil {
-		return inputValue, err
+		return reader.InputValue{}, err
 	}
 
 	for _, transformScheme := range fileURI.TransformSchemes {
