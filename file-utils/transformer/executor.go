@@ -14,9 +14,14 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 
 	readByProtocol, err := reader.DetermineReader(fileURI.InputURL)
 
-	inputValue, err := readByProtocol(fileURI.InputURL)
 	if err != nil {
-		log.Fatal(err)
+		return reader.InputValue{}, err
+	}
+
+	inputValue, err := readByProtocol(fileURI.InputURL)
+
+	if err != nil {
+		return inputValue, err
 	}
 
 	for _, transformScheme := range fileURI.TransformSchemes {

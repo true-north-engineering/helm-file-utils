@@ -12,20 +12,25 @@ import (
 var version = "develop"
 
 func main() {
+
 	if ok := versionCmd(os.Args); ok {
 		return
 	}
+
 	if len(os.Args) < 5 {
 		log.Fatal("error while running file utils plugin, filepath argument is not correctly specified.")
 	}
 	result, err := transformer.ExecuteTransformations(os.Args[4])
+
 	if err != nil {
-		log.Fatal(err)
+		os.Stderr.Write([]byte("Krafna"))
+		os.Exit(1)
 	}
 	if result.Kind != reader.InputKindFile {
 		log.Fatal("error dir scheme available only inside futl parsed yaml file")
 	}
 	err = binary.Write(os.Stdout, binary.LittleEndian, result.Value[reader.InputKindFile])
+
 	if err != nil {
 		log.Fatal("failed to write transformed file")
 	}
