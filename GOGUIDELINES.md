@@ -9,9 +9,6 @@ This is a coding guideline for Go programming language with the purpose of helpi
 - [Package Names](https://blog.golang.org/package-names)
 
 ## 2. Guidelines
-### 2.1. gofmt and goimports commands
-- You should make use of _gofmt_ and _goimports_ commands. This will automatically fix the majority of mechanical style issues, goimports additionally add, remove and organize imports lines as necessary.
-- Most IDEs have plugins to run this commands automatically on save.
 
 ### 2.1. Comments
 
@@ -31,7 +28,6 @@ func (service *orderService) GetOrderByID(ctx context.Context, orderID uint) (st
 #### 2.1.2. Functions Comments
 
 - Exported functions must have comments.
-- Function comments must start with the name of the function and end in a period.
 
 #### 2.1.3. Constant and Variable Comments
 
@@ -124,8 +120,8 @@ log.LogInfo() // Bad
 
 #### 2.2.5. Getters and Setters
 
-- Getter functions should not start with _Get_. For example, if a field is called owner (lower case, unexported), the getter method should be called Owner (upper case, exported), not GetOwner.
-- Setter functions, if needed, can start with _Set_. For example SetOwner.
+- Getter functions should not start with _Get_. 
+- Setter functions, if needed, can start with _Set_.
 
 ```go
 type User struct {
@@ -156,10 +152,10 @@ func (c *User) GetFirstName() string {
 
 ```go
 // Good
-func (f *Foo) Location() (lat, long float64, err error) {...}
+func (f *Foo) Something() (sample, long float64, err error) {...}
  
 // Bad
-func (f *Foo) Location() (float64, float64, error) {...}
+func (f *Foo) Something() (float64, float64, error) {...}
 ```
 
 ### 2.3. Declaring Empty Slices
@@ -211,7 +207,6 @@ if err != nil {
 
 ### 2.5. Errors
 
-- Error strings must not be capitalized (unless beginning with proper nouns or acronyms) or end with punctuation, since they are usually printed following other context. This does not apply to logging, which is implicitly line-oriented and not combined inside other messages.
 
 ```go
 fmt.Errorf("not good") // Good
