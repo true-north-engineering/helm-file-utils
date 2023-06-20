@@ -11,7 +11,7 @@ const (
 	FUTLTag    = "!futl"
 )
 
-func FUTLTransform(inputValue reader.InputValue) (reader.InputValue, error) {
+func FUTLTransform(inputValue reader.InputValue, args string) (reader.InputValue, error) {
 	if inputValue.Kind != reader.InputKindFile {
 		return reader.InputValue{}, errors.New("wrong input type into futl transformer")
 	}

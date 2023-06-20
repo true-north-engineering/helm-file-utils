@@ -2,6 +2,7 @@ package transformer
 
 import (
 	"encoding/base64"
+
 	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 )
 
@@ -10,7 +11,7 @@ const (
 )
 
 // B64ENCTransform Transformer that decodes given base64 encoded data into string format.
-func B64ENCTransform(inputValue reader.InputValue) (reader.InputValue, error) {
+func B64ENCTransform(inputValue reader.InputValue, args string) (reader.InputValue, error) {
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
 	if inputValue.Kind == reader.InputKindFile {
 		inputFile := inputValue.Value[reader.InputKindFile]

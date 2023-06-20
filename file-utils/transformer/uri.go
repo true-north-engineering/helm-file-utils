@@ -1,9 +1,11 @@
 package transformer
 
 import (
+	"regexp"
+	"strings"
+
 	"github.com/pkg/errors"
 	reader "github.com/true-north-engineering/helm-file-utils/file-utils/reader"
-	"strings"
 )
 
 var schemesMap = map[string]bool{
@@ -13,13 +15,15 @@ var schemesMap = map[string]bool{
 	Yaml2JsonPrefix: true,
 	FUTLPrefix:      true,
 	XsltPrefix:      true,
+	CustomPrefix:    true,
 }
 
-type Factory func(inputValue reader.InputValue) (reader.InputValue, error)
+type Factory func(inputValue reader.InputValue, args string) (reader.InputValue, error)
 
 type URI struct {
-	TransformSchemes []string
-	InputURL         string
+	TransformSchemes    []string
+	TransformSchemesArg []string
+	InputURL            string
 }
 
 func ParseURI(uri string) (URI, error) {
@@ -35,22 +39,33 @@ func ParseURI(uri string) (URI, error) {
 		return result, nil
 	}
 
+	fragmentWithArgsRegexp := regexp.MustCompile(`(\w+)\(([^\)]*)\)`)
 	schemes := strings.Split(uriFragments[0], "+")
 	for i := len(schemes) - 1; i >= 0; i-- {
+
+		fragmentWithArgsMatch := fragmentWithArgsRegexp.FindStringSubmatch(schemes[i])
+		scheme := schemes[i]
+		schemeArgs := ""
+		if len(fragmentWithArgsMatch) == 3 {
+			scheme = fragmentWithArgsMatch[1]
+			schemeArgs = fragmentWithArgsMatch[2]
+		}
+
 		if i == len(schemes)-1 {
-			if !schemesMap[schemes[i]] && !reader.InputSchemesMap[schemes[i]] {
+			if !schemesMap[scheme] && !reader.InputSchemesMap[scheme] {
 				return result, errors.New("invalid combination of protocol schemes")
 			}
 		} else {
-			if !schemesMap[schemes[i]] || reader.InputSchemesMap[schemes[i]] {
+			if !schemesMap[scheme] || reader.InputSchemesMap[scheme] {
 				return result, errors.New("invalid combination of protocol schemes")
 			}
 		}
 
-		if schemesMap[schemes[i]] {
-			result.TransformSchemes = append(result.TransformSchemes, schemes[i])
-		} else if reader.InputSchemesMap[schemes[i]] {
-			result.InputURL = schemes[i] + "://" + uriFragments[1]
+		if schemesMap[scheme] {
+			result.TransformSchemes = append(result.TransformSchemes, scheme)
+			result.TransformSchemesArg = append(result.TransformSchemesArg, schemeArgs)
+		} else if reader.InputSchemesMap[scheme] {
+			result.InputURL = scheme + "://" + uriFragments[1]
 		}
 	}
 	if result.InputURL == "" {
@@ -73,6 +88,8 @@ func DetermineTransformer(scheme string) (Factory, error) {
 		return FUTLTransform, nil
 	case scheme == XsltPrefix:
 		return XsltTransform, nil
+	case scheme == CustomPrefix:
+		return CustomTransform, nil
 	}
 
 	return nil, errors.New("transform scheme not found")

@@ -3,6 +3,7 @@ package transformer
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 	"gopkg.in/yaml.v3"
 )
@@ -12,7 +13,7 @@ const (
 )
 
 // Yaml2JsonTransform Transformer that transforms given .yaml or .yml file into .json file.
-func Yaml2JsonTransform(inputValue reader.InputValue) (reader.InputValue, error) {
+func Yaml2JsonTransform(inputValue reader.InputValue, args string) (reader.InputValue, error) {
 
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
 

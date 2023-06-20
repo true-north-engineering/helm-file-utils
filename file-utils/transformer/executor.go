@@ -23,14 +23,14 @@ func ExecuteTransformations(fileURIString string) (reader.InputValue, error) {
 		return reader.InputValue{}, err
 	}
 
-	for _, transformScheme := range fileURI.TransformSchemes {
+	for idx, transformScheme := range fileURI.TransformSchemes {
 
 		transformByProtocol, err := DetermineTransformer(transformScheme)
 		if err != nil {
 			return reader.InputValue{}, err
 		}
 
-		parsedValue, err := transformByProtocol(inputValue)
+		parsedValue, err := transformByProtocol(inputValue, fileURI.TransformSchemesArg[idx])
 		if err != nil {
 			return reader.InputValue{}, err
 		}
