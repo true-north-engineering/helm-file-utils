@@ -8,7 +8,7 @@ const (
 	XsltPrefix = "xslt"
 )
 
-func XsltTransform(inputValue reader.InputValue) (reader.InputValue, error) {
+func XsltTransform(inputValue reader.InputValue, args string) (reader.InputValue, error) {
 	result := reader.InputValue{Kind: inputValue.Kind, Value: make(map[string][]byte)}
 
 	return result, nil
