@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/true-north-engineering/helm-file-utils/file-utils/reader"
 )
 
@@ -27,7 +28,7 @@ func CustomTransform(inputValue reader.InputValue, args string) (reader.InputVal
 		cmd.Stderr = &cmdStdErr
 		cmdErr := cmd.Run()
 		if cmdErr != nil {
-			return reader.InputValue{}, cmdErr
+			return reader.InputValue{}, errors.WithMessage(cmdErr, cmdStdErr.String())
 		}
 		result.Value[reader.InputKindFile] = cmdOutput.Bytes()
 	} else if inputValue.Kind == reader.InputKindDir {
@@ -41,7 +42,7 @@ func CustomTransform(inputValue reader.InputValue, args string) (reader.InputVal
 			cmd.Stderr = &cmdStdErr
 			cmdErr := cmd.Run()
 			if cmdErr != nil {
-				return reader.InputValue{}, cmdErr
+				return reader.InputValue{}, errors.WithMessage(cmdErr, cmdStdErr.String())
 			}
 			result.Value[fileName] = cmdOutput.Bytes()
 		}
